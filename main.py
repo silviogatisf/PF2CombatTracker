@@ -1,7 +1,9 @@
 import sys
 
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import (QPushButton, QLineEdit, QToolBar, QStatusBar, QMainWindow, QWidget, QVBoxLayout, QLabel, QApplication, QComboBox)
+from PyQt5.QtWidgets import (QPushButton, QLineEdit, QToolBar, QStatusBar, QMainWindow, QMdiArea, QLabel, QApplication,
+                             QComboBox, QVBoxLayout, QHBoxLayout, QToolBox, QGridLayout, QTextEdit, QWidget, QRadioButton,
+                             QCheckBox)
 from PyQt5 import (QtWidgets, QtGui)
 
 class Window(QMainWindow):
@@ -10,19 +12,11 @@ class Window(QMainWindow):
         """Initializer."""
         super().__init__(parent)
         self.setWindowTitle('Pathfinder 2E Combat Tracker')
-
-        # Definição geral do layout
-        self.generalLayout = QVBoxLayout()
-        self._centralWidget = QWidget(self)
-        self.setCentralWidget(self._centralWidget)
-        self._centralWidget.setLayout(self.generalLayout)
-        # self.setCentralWidget(QMdiArea())   #QMdiArea permite criar multiplos widget no setCentralWidget
-        # - Certo, mas o app da gente não precisa de um mainwidget dividido. Podemos ter um layout vertical com partes separadas, como no exemplo da calculadora
-        # que tem o display e os botões. A parte debaixo, onde vai entrar os caracteres que tem que ser escolável. (até copiei o código de lá na cara dura)
         self._createMenu()
         self._createToolBar()
         self._createStatusBar()
-        self.setGeometry(300, 300, 680, 600)
+        self._createCentralWidget()
+        self.setGeometry(300, 300, 750, 600)
 
     def _createMenu(self):
         """"Main menu"""
@@ -43,33 +37,78 @@ class Window(QMainWindow):
         tools.addAction('Add Monster')
         tools.addAction('Remove Char')
         tools.addAction('Reorder Init')
-        cond = QComboBox(self)    #Define dropdown menu
+
+        cond = QComboBox(self)                               #Define dropdown menu
         tools.addWidget(QLabel('Condition: '))
         tools.addWidget(cond)
         cond.addItems(['Cond1', 'Cond2', 'Cond3', 'Cond4', 'Cond5', 'Cond6', 'Cond7', 'Cond8', 'Cond9']) #Add all buttons in the dropdown menu
         condVal = QComboBox(self)
         tools.addWidget(condVal)
         condVal.addItems(['Value', '1', '2', '3', '4', '5', '6', '7', '8', '9'])
-        tools.addAction(QIcon(), 'Apply')
+        btnApplyCond = QPushButton('Apply')
+        tools.addWidget(btnApplyCond)
+
         tools.addWidget(QLabel('Effect: '))
         tools.addWidget(QLineEdit('Type here'))
         effecRounds = QComboBox(self)
         tools.addWidget(effecRounds)
         effecRounds.addItems(['Value', '1', '2', '3', '4', '5', '6', '7', '8', '9'])
-        tools.addAction(QIcon(), 'Apply')
+        btnApplyEffect = QPushButton('Apply')
+        tools.addWidget(btnApplyEffect)
 
-    def _createRoundLayout(self):
-        """Cria a parte de round no programa"""
+    def _createCentralWidget(self):
+        """Central Widget"""
+        layout = QVBoxLayout()
 
-        # Contador de rounds
-        self.roundNumber = 0
-        self.roundCont = QLabel('<h1>Round</h1> ' + str(self.roundNumber))
+        layout.addItem(self._roundWidget())             #Calling RoundInfo widget
 
-        # linha com o turno e as ações
+        charNum = 5
+        x = 0
+        while x < charNum:                             #Routine to call add X characters
+            x = x + 1
+            layout.addItem(self._charWidget())         #Calling character widget
 
+
+        centraWid = QWidget()
+        centraWid.setLayout(layout)
+        self.setCentralWidget(centraWid)              #Changed from QMdiArea to Qwidget, still confused on how to use it
+
+    def _roundWidget(self):
+        """Top Widget: Informations before characters, called on _createCentralWidget"""
+        toplayout = QHBoxLayout()
+
+        toplayout.addWidget(QLabel("Round 1"))
+
+        toplayout.addWidget(QLabel("Character 1 turn"))
+
+        toplayout.addWidget(QPushButton('Previous Char'))
+        toplayout.addWidget(QCheckBox())
+        toplayout.addWidget(QCheckBox())
+        toplayout.addWidget(QCheckBox())
+        toplayout.addWidget(QPushButton('Next Char'))
+        return toplayout
+
+    def _charWidget(self):
+        """Characte Widget: Information of character Called on _createCentralWidget"""
+        charlayout = QHBoxLayout()
+
+        charlayout.addWidget(QLabel('Character 1 '))
+
+        charlayout.addWidget(QLabel('HP: 100% '))
+        charlayout.addWidget(QLabel('HP MOD: '))
+        charlayout.addWidget(QLineEdit())
+        charlayout.addWidget(QPushButton('Apply'))
+
+        charlayout.addWidget(QLabel('AC: 100% '))
+        charlayout.addWidget(QLabel('AC MOD'))
+        charlayout.addWidget(QLineEdit())
+        charlayout.addWidget(QPushButton('Apply'))
+
+        charlayout.addWidget(QLabel('Init: '))
+        charlayout.addWidget(QLineEdit())
+        return charlayout
 
     def _createStatusBar(self):
-        """Status bar"""
         status = QStatusBar()
         status.showMessage("Let's roll the dice")
         self.setStatusBar(status)
