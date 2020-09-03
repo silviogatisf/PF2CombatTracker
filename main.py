@@ -1,6 +1,6 @@
 import sys
 
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import (QIcon, QBitmap, QPixmap)
 from PyQt5.QtWidgets import (QPushButton, QLineEdit, QToolBar, QStatusBar, QMainWindow, QMdiArea, QLabel, QApplication,
                              QComboBox, QVBoxLayout, QHBoxLayout, QToolBox, QGridLayout, QTextEdit, QWidget, QRadioButton,
                              QCheckBox)
@@ -75,18 +75,59 @@ class Window(QMainWindow):
 
     def _roundWidget(self):
         """Top Widget: Informations before characters, called on _createCentralWidget"""
-        toplayout = QHBoxLayout()
 
-        toplayout.addWidget(QLabel("Round 1"))
+        # creates the round counter
+        roundNumber = 0
+        roundDisplay = QLabel(f"<h1>ROUND: {roundNumber}</h1>") # aqui eu tou usando f-string, é uma coisa do python3 pra colocar jogar a variável dentro da string de uma maneira mais fácil.
+        # layout of the first line of roundDisplay
+        roundDisplayLayout1 = QHBoxLayout
+        roundDisplayLayout1.addWidget(roundDisplay)
+        roundDisplayLayout1.addStretch(1) # isso daqui é um espaçador para empurrar o label pra esquerda
 
-        toplayout.addWidget(QLabel("Character 1 turn"))
+        # creates the line with the char's turn, actions e buttons to advance and return an turn / slash round
+        turnDisplay = QLabel("<h4>Character's turn<h4>") # essa parada ta de placeholder, a gente tem que colocar o personagem a partir da função que determina o turno do personagem.
 
-        toplayout.addWidget(QPushButton('Previous Char'))
-        toplayout.addWidget(QCheckBox())
-        toplayout.addWidget(QCheckBox())
-        toplayout.addWidget(QCheckBox())
-        toplayout.addWidget(QPushButton('Next Char'))
-        return toplayout
+        # previous turn button
+        previousTurn = QPushButton()
+        previousTurn.setIcon(QIcon('circle-left.png'))
+
+        # actions logic
+        actionsNumber = 3 # por default o jogador deve ter 3 ações, as condições do personagem vão interferir nisso.
+        actionsIcon = QIcon('action.png')
+        # actions layout
+        actionLayout = QHBoxLayout
+        for action in range (0, actionsNumber - 1):
+            actionLayout.addWidget(actionsIcon)
+
+        # next turn button
+        nextTurn = QPushButton()
+        nextTurn.setIcon(QIcon('circle-right.png'))
+
+        # layout of the second line of the roundDysplay
+        roundDisplayLayout2 = QHBoxLayout
+        roundDisplayLayout2.addWidget(turnDisplay)
+        roundDisplayLayout2.addStretch()
+        roundDisplayLayout2.addWidget(previousTurn)
+        roundDisplayLayout2.addWidget(actionLayout)
+        roundDisplayLayout2.addWidget(nextTurn)
+
+        # toplayout of roundisplay
+        self.toplayout = QVBoxLayout()
+        self.toplayout.addWidget(roundDisplayLayout1)
+        self.toplayout.addWidget(roundDisplayLayout2)
+        # toplayout = QHBoxLayout()
+        #
+        # toplayout.addWidget(QLabel("Round 1"))
+        #
+        # toplayout.addWidget(QLabel("Character 1 turn"))
+        #
+        # toplayout.addWidget(QPushButton('Previous Char'))
+        # toplayout.addWidget(QCheckBox())
+        # toplayout.addWidget(QCheckBox())
+        # toplayout.addWidget(QCheckBox())
+        # toplayout.addWidget(QPushButton('Next Char'))
+        self.setLayout(self.toplayout)
+        return self.toplayout
 
     def _charWidget(self):
         """Characte Widget: Information of character Called on _createCentralWidget"""
