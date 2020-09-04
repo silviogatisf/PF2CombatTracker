@@ -1,5 +1,7 @@
 import sys
 
+from PyQt5 import QtCore
+from PyQt5.QtCore import (QSize, Qt)
 from PyQt5.QtGui import (QIcon, QBitmap, QPixmap)
 from PyQt5.QtWidgets import (QPushButton, QLineEdit, QToolBar, QStatusBar, QMainWindow, QMdiArea, QLabel, QApplication,
                              QComboBox, QVBoxLayout, QHBoxLayout, QToolBox, QGridLayout, QTextEdit, QWidget, QRadioButton,
@@ -89,29 +91,40 @@ class Window(QMainWindow):
 
         # creates the line with the char's turn, actions e buttons to advance and return an turn / slash round
         turnDisplay = QLabel("<h2>Character's turn<h2>") # essa parada ta de placeholder, a gente tem que colocar o personagem a partir da função que determina o turno do personagem.
+        turnDisplayLayout = QVBoxLayout()
+        turnDisplayLayout.addStretch(10)
+        turnDisplayLayout.addWidget(turnDisplay)
+        turnDisplayLayout.addStretch(10)
 
         # previous turn button
-        previousTurn = QPushButton()
+        previousTurn = QPushButton(self)
+        previousTurn.resize(24,24)
         previousTurn.setIcon(QIcon('circle-left.png'))
+        previousTurn.setIconSize(QSize(24,24))
 
         # actions logic
         actionsNumber = 3 # por default o jogador deve ter 3 ações, as condições do personagem vão interferir nisso.
-        actionsIcon = QPushButton()
-        actionsIcon.setIcon(QIcon('action.png'))
         # actions layout
         actionLayout = QHBoxLayout()
-        for action in range(0, actionsNumber - 1):
+        for action in range(0, actionsNumber):
+            actionsIcon = QLabel(self)
+            actionsIconPixmap = QPixmap('action.png')
+            actionsIcon.setPixmap(actionsIconPixmap)
             actionLayout.addWidget(actionsIcon)
+            actionLayout.addSpacing(10)
 
         # next turn button
-        nextTurn = QPushButton()
+        nextTurn = QPushButton(self)
+        nextTurn.resize(24,24)
         nextTurn.setIcon(QIcon('circle-right.png'))
+        nextTurn.setIconSize(QSize(24,24))
 
         # layout of the second line of the roundDysplay
         roundDisplayLayout2 = QHBoxLayout()
-        roundDisplayLayout2.addWidget(turnDisplay)
+        roundDisplayLayout2.addLayout(turnDisplayLayout)
         roundDisplayLayout2.addStretch(1)
         roundDisplayLayout2.addWidget(previousTurn)
+        roundDisplayLayout2.addSpacing(10)
         roundDisplayLayout2.addLayout(actionLayout)
         roundDisplayLayout2.addWidget(nextTurn)
 
