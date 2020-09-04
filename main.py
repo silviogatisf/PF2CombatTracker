@@ -68,6 +68,8 @@ class Window(QMainWindow):
             x = x + 1
             layout.addItem(self._charWidget())         #Calling character widget
 
+        layout.addStretch(1)
+
 
         centraWid = QWidget()
         centraWid.setLayout(layout)
@@ -80,12 +82,13 @@ class Window(QMainWindow):
         roundNumber = 0
         roundDisplay = QLabel(f"<h1>ROUND: {roundNumber}</h1>") # aqui eu tou usando f-string, é uma coisa do python3 pra colocar jogar a variável dentro da string de uma maneira mais fácil.
         # layout of the first line of roundDisplay
-        roundDisplayLayout1 = QHBoxLayout
+        roundDisplayLayout1 = QHBoxLayout()
+        # roundDisplay.setLayout(roundDisplayLayout1)
         roundDisplayLayout1.addWidget(roundDisplay)
         roundDisplayLayout1.addStretch(1) # isso daqui é um espaçador para empurrar o label pra esquerda
 
         # creates the line with the char's turn, actions e buttons to advance and return an turn / slash round
-        turnDisplay = QLabel("<h4>Character's turn<h4>") # essa parada ta de placeholder, a gente tem que colocar o personagem a partir da função que determina o turno do personagem.
+        turnDisplay = QLabel("<h2>Character's turn<h2>") # essa parada ta de placeholder, a gente tem que colocar o personagem a partir da função que determina o turno do personagem.
 
         # previous turn button
         previousTurn = QPushButton()
@@ -93,10 +96,11 @@ class Window(QMainWindow):
 
         # actions logic
         actionsNumber = 3 # por default o jogador deve ter 3 ações, as condições do personagem vão interferir nisso.
-        actionsIcon = QIcon('action.png')
+        actionsIcon = QPushButton()
+        actionsIcon.setIcon(QIcon('action.png'))
         # actions layout
-        actionLayout = QHBoxLayout
-        for action in range (0, actionsNumber - 1):
+        actionLayout = QHBoxLayout()
+        for action in range(0, actionsNumber - 1):
             actionLayout.addWidget(actionsIcon)
 
         # next turn button
@@ -104,28 +108,18 @@ class Window(QMainWindow):
         nextTurn.setIcon(QIcon('circle-right.png'))
 
         # layout of the second line of the roundDysplay
-        roundDisplayLayout2 = QHBoxLayout
+        roundDisplayLayout2 = QHBoxLayout()
         roundDisplayLayout2.addWidget(turnDisplay)
-        roundDisplayLayout2.addStretch()
+        roundDisplayLayout2.addStretch(1)
         roundDisplayLayout2.addWidget(previousTurn)
-        roundDisplayLayout2.addWidget(actionLayout)
+        roundDisplayLayout2.addLayout(actionLayout)
         roundDisplayLayout2.addWidget(nextTurn)
 
         # toplayout of roundisplay
         self.toplayout = QVBoxLayout()
-        self.toplayout.addWidget(roundDisplayLayout1)
-        self.toplayout.addWidget(roundDisplayLayout2)
-        # toplayout = QHBoxLayout()
-        #
-        # toplayout.addWidget(QLabel("Round 1"))
-        #
-        # toplayout.addWidget(QLabel("Character 1 turn"))
-        #
-        # toplayout.addWidget(QPushButton('Previous Char'))
-        # toplayout.addWidget(QCheckBox())
-        # toplayout.addWidget(QCheckBox())
-        # toplayout.addWidget(QCheckBox())
-        # toplayout.addWidget(QPushButton('Next Char'))
+        self.toplayout.addLayout(roundDisplayLayout1)
+        self.toplayout.addLayout(roundDisplayLayout2)
+
         self.setLayout(self.toplayout)
         return self.toplayout
 
