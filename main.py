@@ -230,6 +230,51 @@ class Window(QMainWindow):
         status.showMessage("Let's roll the dice")
         self.setStatusBar(status)
 
+conditionData = {
+    'NA':'NA',
+    'Blinded': ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
+    'Broken(object)' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
+    'Clumsy' : ['NA', '1', '2', '3', '4', '5'],
+    'Concealed' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
+    'Confused' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
+    'Controled' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
+    'Dazzled' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
+    'Deafened' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
+    'Doomed' : ['NA', '1', '2', '3', '4', '5'],
+    'Drained' : ['NA', '1', '2', '3', '4', '5'],
+    'Dying' : ['NA', '1', '2', '3', '4', '5'],
+    'Encumbered' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
+    'Enfleebed' : ['NA', '1', '2', '3', '4', '5'],
+    'Fascinated' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
+    'Fatigued' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
+    'Flat-Footed' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
+    'Fleeing' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
+    'Friendly' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
+    'Frightened' : ['NA', '1', '2', '3', '4', '5'],
+    'Grabbed' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
+    'Helpful' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
+    'Hidden' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
+    'Hostile' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
+    'Immobilized' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
+    'Indifferent' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
+    'Invisible' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
+    'Observed' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
+    'Persistent Damage' : ['NA', '1d4', '2d4', '3d4', '1d6', '2d6', '3d6', '1d8', '2d8', 'other'],
+    'Petrified' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
+    'Prone' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
+    'Quickened' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
+    'Restrained' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
+    'Sickened' : ['NA', '1', '2', '3', '4', '5'],
+    'Slowed' : ['NA', '1', '2', '3', '4', '5'],
+    'Stunned' : ['NA', '1', '2', '3', '4', '5'],
+    'Stupefied' : ['NA', '1', '2', '3', '4', '5'],
+    'Unconscious' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
+    'Undetected': ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
+    'Unfriendly' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
+    'Unnoticed' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
+    'Wounded' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
+}
+
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     win = Window()
