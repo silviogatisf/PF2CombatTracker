@@ -33,16 +33,36 @@ class Window(QMainWindow):
         """Toolbar"""
         tools = QToolBar()
         self.addToolBar(tools)
+        tools.setIconSize(QSize(24,24))
+        tools.setFixedHeight(36)
+        tools.setStyleSheet("QToolBar{spacing:5px;}")
 
 #        folderOpen = QtWidgets.QAction(QtGui.QIcon("add_pack.ico"), "Open Folder", tools)   #Dunno how to use it... but shows an icon instead of text, Might be useful
 #        tools.addAction(folderOpen)
-        tools.addAction('Add Char')
-        tools.addAction('Add Monster')
-        tools.addAction('Remove Char')
-        tools.addAction('Reorder Init')
 
-        cond = QComboBox(self)                               #Define dropdown menu
+        # BTN Add char
+        addCharBtn = QPushButton(self)
+        addCharBtn.setIcon(QIcon('addchar.png'))
+        tools.addWidget(addCharBtn)
+
+        # BTN Monster
+        addMonBtn = QPushButton(self)
+        addMonBtn.setIcon(QIcon('monster.png'))
+        tools.addWidget(addMonBtn)
+
+        #BTN Remove char
+        removeCharBtn = QPushButton(self)
+        removeCharBtn.setIcon(QIcon('removechar.png'))
+        tools.addWidget(removeCharBtn)
+
+        # BTN Sort
+        sortBtn = QPushButton(self)
+        sortBtn.setIcon(QIcon('sort.png'))
+        tools.addWidget(sortBtn)
+
+        # CondCombo
         tools.addWidget(QLabel('Condition: '))
+        cond = QComboBox(self)
         tools.addWidget(cond)
         cond.addItems(['Cond1', 'Cond2', 'Cond3', 'Cond4', 'Cond5', 'Cond6', 'Cond7', 'Cond8', 'Cond9']) #Add all buttons in the dropdown menu
         condVal = QComboBox(self)
@@ -51,6 +71,7 @@ class Window(QMainWindow):
         btnApplyCond = QPushButton('Apply')
         tools.addWidget(btnApplyCond)
 
+        # ValueCombo
         tools.addWidget(QLabel('Effect: '))
         tools.addWidget(QLineEdit('Type here'))
         effecRounds = QComboBox(self)
