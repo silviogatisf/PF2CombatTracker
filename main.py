@@ -1,10 +1,11 @@
 import sys
 
+
 from PyQt5.QtGui import (QIcon, QBitmap, QPixmap)
 from PyQt5.QtWidgets import (QPushButton, QLineEdit, QToolBar, QStatusBar, QMainWindow, QMdiArea, QLabel, QApplication,
                              QComboBox, QVBoxLayout, QHBoxLayout, QToolBox, QGridLayout, QTextEdit, QWidget, QRadioButton,
-                             QCheckBox, QScrollArea)
-from PyQt5 import (QtWidgets, QtGui)
+                             QCheckBox, QScrollArea, QBoxLayout)
+from PyQt5 import (QtWidgets, QtGui, Qt)
 
 class Window(QMainWindow):
     """Main Window."""
@@ -59,7 +60,10 @@ class Window(QMainWindow):
     def _createCentralWidget(self):
         """Central Widget"""
         layout = QVBoxLayout()
-        scroll = QScrollArea()
+        scroll = QScrollArea()          # Scroll Area which contains the widgets
+        widget = QWidget()              # Widget that contains the collection of Vertical Box
+        vbox = QVBoxLayout()            # The Vertical Box that contains _charLayout
+
 
         layout.addItem(self._roundWidget())             #Calling RoundInfo widget
         layout.addWidget(scroll)
@@ -68,9 +72,12 @@ class Window(QMainWindow):
         x = 0
         while x < charNum:                             #Routine to call add X characters
             x = x + 1
-            layout.addItem(self._charWidget())         #Calling character widget
+            vbox.addItem(self._charWidget())         #Calling character widget
 
-        layout.addStretch(1)
+        """Scroll Area Properties"""
+        widget.setLayout(vbox)
+        scroll.setWidgetResizable(True)
+        scroll.setWidget(widget)
 
 
         centraWid = QWidget()
@@ -127,16 +134,15 @@ class Window(QMainWindow):
 
     def _charWidget(self):
         """Characte Widget: Information of character Called on _createCentralWidget"""
-        # charDisplayLayout1 = QHBoxLayout()
-        # charDisplayLayout1.setSpacing(42)
-        # charDisplayLayout1.addStretch(1)
 
         charDisplayLayout2 = QHBoxLayout()
-        charDisplayLayout2.addStretch(3)
         charDisplayLayout2.setSpacing(10)
 
         charName = QLabel(f"<h1>{'Personagem'}</h1>")  # to be defined from a list with all characters in combat
         charDisplayLayout2.addWidget(charName)
+        charDisplayLayout2.addStretch(1)
+        charDisplayGrid = QGridLayout()
+        charDisplayLayout2.addLayout(charDisplayGrid)
 
         """Defining all the widgets"""
         hp = QLabel('HP')           #Title HP
@@ -158,8 +164,6 @@ class Window(QMainWindow):
         initLine.setFixedWidth(40)
 
         """Placing all the widgets in a grid format"""
-        charDisplayGrid = QGridLayout()
-        charDisplayLayout2.addLayout(charDisplayGrid)
         charDisplayGrid.addWidget(hp, 0, 0)
         charDisplayGrid.addWidget(hpMod, 0, 1)
         charDisplayGrid.addWidget(ac, 0, 3)
@@ -173,25 +177,29 @@ class Window(QMainWindow):
         charDisplayGrid.addWidget(acApply, 1, 5)
         charDisplayGrid.addWidget(initLine, 1, 6)
 
-
+        """Placing conditions and effects"""
         charDisplayLayout3 = QHBoxLayout()
         cond = QLabel('Condition 1')
         condPlus = QPushButton('+')
         condPlus.setFixedWidth(20)
         condMinus = QPushButton('-')
         condMinus.setFixedWidth(20)
-        reactionBtn = QPushButton()
-        reactionBtn.setFixedWidth(30)
-        charDisplayLayout3.addWidget(cond)
-        charDisplayLayout3.addWidget(condPlus)
-        charDisplayLayout3.addWidget(condMinus)
+        reactionBtn = QPushButton('Reaction icon')
+
+        isCond = 1                                      #Variable to check if there is condition
+
+        if isCond == True:
+            charDisplayLayout3.addWidget(cond)
+            charDisplayLayout3.addWidget(condPlus)
+            charDisplayLayout3.addWidget(condMinus)
+
+        charDisplayLayout3.addStretch(1)
         charDisplayLayout3.addWidget(reactionBtn)
 
         #Free space to write
         charDisplayLayout4 = QHBoxLayout()
         editText = QTextEdit()
         charDisplayLayout4.addWidget(editText)
-
 
 
         # # Setting character layout
@@ -202,22 +210,6 @@ class Window(QMainWindow):
         self.charlayout.addLayout(charDisplayLayout4)
         self.setLayout(self.charlayout)
 
-        # charlayout = QHBoxLayout()
-        #
-        # charlayout.addWidget(QLabel('Character 1 '))
-        #
-        # charlayout.addWidget(QLabel('HP: 100% '))
-        # charlayout.addWidget(QLabel('HP MOD: '))
-        # charlayout.addWidget(QLineEdit())
-        # charlayout.addWidget(QPushButton('Apply'))
-        #
-        # charlayout.addWidget(QLabel('AC: 100% '))
-        # charlayout.addWidget(QLabel('AC MOD'))
-        # charlayout.addWidget(QLineEdit())
-        # charlayout.addWidget(QPushButton('Apply'))
-        #
-        # charlayout.addWidget(QLabel('Init: '))
-        # charlayout.addWidget(QLineEdit())
         return self.charlayout
 
     def _createStatusBar(self):
