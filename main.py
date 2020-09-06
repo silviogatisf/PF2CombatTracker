@@ -8,6 +8,7 @@ from PyQt5.QtWidgets import (QPushButton, QLineEdit, QToolBar, QStatusBar, QMain
                              QComboBox, QVBoxLayout, QHBoxLayout, QToolBox, QGridLayout, QTextEdit, QWidget, QRadioButton,
                              QCheckBox, QScrollArea, QBoxLayout)
 from PyQt5 import (QtWidgets, QtGui, Qt)
+from functools import partial
 
 class Window(QMainWindow):
     """Main Window."""
@@ -60,18 +61,30 @@ class Window(QMainWindow):
         self.sortBtn.setIcon(QIcon('sort.png'))
         self.tools.addWidget(self.sortBtn)
 
-        # CondCombo
+        # Condition label
         self.tools.addWidget(QLabel('Condition: '))
+
+        # CondCombo
+
         self.cond = QComboBox()
         self.tools.addWidget(self.cond)
-        self.cond.addItems(['Cond1', 'Cond2', 'Cond3', 'Cond4', 'Cond5', 'Cond6', 'Cond7', 'Cond8', 'Cond9']) #Add all buttons in the dropdown menu
+
+
+        # CondValueCombo
         self.condVal = QComboBox(self)
         self.tools.addWidget(self.condVal)
-        self.condVal.addItems(['Value', '1', '2', '3', '4', '5', '6', '7', '8', '9'])
+
+        # Add CondCombo & CondValueCombo data
+        for condicao, val in conditionData.items():
+            self.cond.addItem(condicao)
+            for valor in val:
+                self.condVal.addItem(valor)
+
+        # Btn apply Condition
         self.btnApplyCond = QPushButton('Apply')
         self.tools.addWidget(self.btnApplyCond)
 
-        # ValueCombo
+        # Effect Combo
         self.tools.addWidget(QLabel('Effect: '))
         self.tools.addWidget(QLineEdit('Type here'))
         self.effecRounds = QComboBox(self)
@@ -250,6 +263,10 @@ class Window(QMainWindow):
         status = QStatusBar()
         status.showMessage("Let's roll the dice")
         self.setStatusBar(status)
+
+
+    # def _toolbarController(self):
+    """ Tollbar Controller """
 
 conditionData = {
     'NA':'NA',
