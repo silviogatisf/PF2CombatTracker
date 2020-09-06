@@ -31,54 +31,54 @@ class Window(QMainWindow):
 
     def _createToolBar(self):
         """Toolbar"""
-        tools = QToolBar()
-        self.addToolBar(tools)
-        tools.setIconSize(QSize(24,24))
-        tools.setFixedHeight(36)
-        tools.setStyleSheet("QToolBar{spacing:5px;}")
+        self.tools = QToolBar()
+        self.addToolBar(self.tools)
+        self.tools.setIconSize(QSize(24,24))
+        self.tools.setFixedHeight(36)
+        self.tools.setStyleSheet("QToolBar{spacing:5px;}")
 
 #        folderOpen = QtWidgets.QAction(QtGui.QIcon("add_pack.ico"), "Open Folder", tools)   #Dunno how to use it... but shows an icon instead of text, Might be useful
 #        tools.addAction(folderOpen)
 
         # BTN Add char
-        addCharBtn = QPushButton(self)
-        addCharBtn.setIcon(QIcon('addchar.png'))
-        tools.addWidget(addCharBtn)
+        self.addCharBtn = QPushButton()
+        self.addCharBtn.setIcon(QIcon('addchar.png'))
+        self.tools.addWidget(self.addCharBtn)
 
         # BTN Monster
-        addMonBtn = QPushButton(self)
-        addMonBtn.setIcon(QIcon('monster.png'))
-        tools.addWidget(addMonBtn)
+        self.addMonBtn = QPushButton()
+        self.addMonBtn.setIcon(QIcon('monster.png'))
+        self.tools.addWidget(self.addMonBtn)
 
         #BTN Remove char
-        removeCharBtn = QPushButton(self)
-        removeCharBtn.setIcon(QIcon('removechar.png'))
-        tools.addWidget(removeCharBtn)
+        self.removeCharBtn = QPushButton()
+        self.removeCharBtn.setIcon(QIcon('removechar.png'))
+        self.tools.addWidget(self.removeCharBtn)
 
         # BTN Sort
-        sortBtn = QPushButton(self)
-        sortBtn.setIcon(QIcon('sort.png'))
-        tools.addWidget(sortBtn)
+        self.sortBtn = QPushButton()
+        self.sortBtn.setIcon(QIcon('sort.png'))
+        self.tools.addWidget(self.sortBtn)
 
         # CondCombo
-        tools.addWidget(QLabel('Condition: '))
-        cond = QComboBox(self)
-        tools.addWidget(cond)
-        cond.addItems(['Cond1', 'Cond2', 'Cond3', 'Cond4', 'Cond5', 'Cond6', 'Cond7', 'Cond8', 'Cond9']) #Add all buttons in the dropdown menu
-        condVal = QComboBox(self)
-        tools.addWidget(condVal)
-        condVal.addItems(['Value', '1', '2', '3', '4', '5', '6', '7', '8', '9'])
-        btnApplyCond = QPushButton('Apply')
-        tools.addWidget(btnApplyCond)
+        self.tools.addWidget(QLabel('Condition: '))
+        self.cond = QComboBox()
+        self.tools.addWidget(self.cond)
+        self.cond.addItems(['Cond1', 'Cond2', 'Cond3', 'Cond4', 'Cond5', 'Cond6', 'Cond7', 'Cond8', 'Cond9']) #Add all buttons in the dropdown menu
+        self.condVal = QComboBox(self)
+        self.tools.addWidget(self.condVal)
+        self.condVal.addItems(['Value', '1', '2', '3', '4', '5', '6', '7', '8', '9'])
+        self.btnApplyCond = QPushButton('Apply')
+        self.tools.addWidget(self.btnApplyCond)
 
         # ValueCombo
-        tools.addWidget(QLabel('Effect: '))
-        tools.addWidget(QLineEdit('Type here'))
-        effecRounds = QComboBox(self)
-        tools.addWidget(effecRounds)
-        effecRounds.addItems(['Value', '1', '2', '3', '4', '5', '6', '7', '8', '9'])
-        btnApplyEffect = QPushButton('Apply')
-        tools.addWidget(btnApplyEffect)
+        self.tools.addWidget(QLabel('Effect: '))
+        self.tools.addWidget(QLineEdit('Type here'))
+        self.effecRounds = QComboBox(self)
+        self.tools.addWidget(self.effecRounds)
+        self.effecRounds.addItems(['Value', '1', '2', '3', '4', '5', '6', '7', '8', '9'])
+        self.btnApplyEffect = QPushButton('Apply')
+        self.tools.addWidget(self.btnApplyEffect)
 
     def _createCentralWidget(self):
         """Central Widget"""
