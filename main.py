@@ -43,7 +43,7 @@ class Window(QMainWindow):
         # BTN Add char
         addCharBtn = QPushButton()
         addCharBtn.setIcon(QIcon('addchar.png'))
-        tools.addWidget(addCharBtn)
+        self.tools.addWidget(addCharBtn)
         addCharBtn.clicked.connect(self.addChar)
 
         # BTN Monster
@@ -54,7 +54,7 @@ class Window(QMainWindow):
         #BTN Remove char
         removeCharBtn = QPushButton()
         removeCharBtn.setIcon(QIcon('removechar.png'))
-        tools.addWidget(removeCharBtn)
+        self.tools.addWidget(removeCharBtn)
         removeCharBtn.clicked.connect(self.removeChar)
 
         # BTN Sort
