@@ -133,9 +133,9 @@ class Window(QMainWindow):
         self.vbox = QVBoxLayout()            # The Vertical Box that contains _charLayout
 
         self.vbox.setObjectName("vbox")
-        self.charCount = 4
+        self.charCount = 2
 
-        layout.addItem(self._roundWidget())           #Calling RoundInfo widget
+        layout.addWidget(self._roundWidget())           #Calling RoundInfo widget
         layout.addWidget(scroll)
 
         self.populateCharWidget()
@@ -172,6 +172,7 @@ class Window(QMainWindow):
 
         # creates the line with the char's turn, actions e buttons to advance and return an turn / slash round
         turnDisplay = QLabel("<h2>Character's turn<h2>") # essa parada ta de placeholder, a gente tem que colocar o personagem a partir da função que determina o turno do personagem.
+        turnDisplay.setFixedHeight(20)
         turnDisplayLayout = QVBoxLayout()
         turnDisplayLayout.addStretch(10)
         turnDisplayLayout.addWidget(turnDisplay)
@@ -210,12 +211,15 @@ class Window(QMainWindow):
         roundDisplayLayout2.addWidget(nextTurn)
 
         # toplayout of roundisplay
+        self.toplayoutWidget = QWidget()
+        self.toplayoutWidget.setFixedHeight(85)
         self.toplayout = QVBoxLayout()
+        self.toplayoutWidget.setLayout(self.toplayout)
         self.toplayout.addLayout(roundDisplayLayout1)
         self.toplayout.addLayout(roundDisplayLayout2)
 
         self.setLayout(self.toplayout)
-        return self.toplayout
+        return self.toplayoutWidget
 
     def textEdited(self):
         # If the input is left empty, revert back to the label showing
@@ -334,9 +338,19 @@ conditionGeneralValue = ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5
 conditionCountValue = ['NA', '1', '2', '3', '4', '5']
 persistentDamageValue = ['NA', '1d4', '2d4', '3d4', '1d6', '2d6', '3d6', '1d8', '2d8', 'other']
 
-# class personagem():
-#     def __init__(self, charName, ac, hp, init, cond, effect, footnote, reaction, turnBool, actionNumber ):
-#
+class personagem():
+    def __init__(self, name, ac, hp, init, cond, effect, footnote, reaction, turnBool, actionNumber, parent = None):
+        super(personagem, self).__init__(parent)
+        self.name = name
+        self.ac = ac
+        self.hp = hp
+        self.init = init
+        self.effect = effect
+        self.footnote = footnote
+        self.reaction = reaction
+        self.turnBool = turnBool
+        self.actionNumber = actionNumber
+
 
 
 # Make a custom label widget (mostly for its mousePressEvent) Used to hide characters name
