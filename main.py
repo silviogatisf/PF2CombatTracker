@@ -22,6 +22,7 @@ class Window(QMainWindow):
         self._createCentralWidget()
         self.setGeometry(300, 300, 750, 600)
 
+
     def _createMenu(self):
         """"Main menu"""
         self.menu = self.menuBar().addMenu("&Menu")
@@ -42,43 +43,43 @@ class Window(QMainWindow):
 #        tools.addAction(folderOpen)
 
         # BTN Add char
-        self.addCharBtn = QPushButton()
-        self.addCharBtn.setIcon(QIcon('addchar.png'))
-        self.tools.addWidget(self.addCharBtn)
+        addCharBtn = QPushButton()
+        addCharBtn.setIcon(QIcon('addchar.png'))
+        self.tools.addWidget(addCharBtn)
 
         # BTN Monster
-        self.addMonBtn = QPushButton()
-        self.addMonBtn.setIcon(QIcon('monster.png'))
-        self.tools.addWidget(self.addMonBtn)
+        addMonBtn = QPushButton()
+        addMonBtn.setIcon(QIcon('monster.png'))
+        self.tools.addWidget(addMonBtn)
 
         #BTN Remove char
-        self.removeCharBtn = QPushButton()
-        self.removeCharBtn.setIcon(QIcon('removechar.png'))
-        self.tools.addWidget(self.removeCharBtn)
+        removeCharBtn = QPushButton()
+        removeCharBtn.setIcon(QIcon('removechar.png'))
+        self.tools.addWidget(removeCharBtn)
 
         # BTN Sort
-        self.sortBtn = QPushButton()
-        self.sortBtn.setIcon(QIcon('sort.png'))
-        self.tools.addWidget(self.sortBtn)
+        sortBtn = QPushButton()
+        sortBtn.setIcon(QIcon('sort.png'))
+        self.tools.addWidget(sortBtn)
 
         # Condition label
         self.tools.addWidget(QLabel('Condition: '))
 
-        # CondCombo
+        # condCombo
+        self.condCombo = QComboBox()
 
-        self.cond = QComboBox()
-        self.tools.addWidget(self.cond)
-
+        # Add condCombo data
+        for condition in conditionList:
+            self.condCombo.addItem(condition)
+        # Connect combo
+        self.condCombo.currentIndexChanged.connect(self._updateCondVal)
+        #add combo to toolbar
+        self.tools.addWidget(self.condCombo)
 
         # CondValueCombo
-        self.condVal = QComboBox(self)
-        self.tools.addWidget(self.condVal)
-
-        # Add CondCombo & CondValueCombo data
-        for condicao, val in conditionData.items():
-            self.cond.addItem(condicao)
-            for valor in val:
-                self.condVal.addItem(valor)
+        self.comboVal = QComboBox()
+        self.comboVal.addItems(conditionGeneralValue)
+        self.tools.addWidget(self.comboVal)
 
         # Btn apply Condition
         self.btnApplyCond = QPushButton('Apply')
@@ -92,6 +93,25 @@ class Window(QMainWindow):
         self.effecRounds.addItems(['Value', '1', '2', '3', '4', '5', '6', '7', '8', '9'])
         self.btnApplyEffect = QPushButton('Apply')
         self.tools.addWidget(self.btnApplyEffect)
+
+    # Upadate comboVal function
+    def _updateCondVal(self):
+        condition = self.condCombo.currentText()
+        # ordinaryCombo1 = QComboBox
+        # ordinaryCombo2 = QComboBox
+        # ordinaryCombo3 = QComboBox
+        if condition in conditionGeneral:
+            self.comboVal.clear()
+            for val1 in conditionGeneralValue:
+                self.comboVal.addItem(val1)
+        elif condition in conditionCount:
+            self.comboVal.clear()
+            for val2 in conditionCountValue:
+                self.comboVal.addItem(val2)
+        else:
+            self.comboVal.clear()
+            for val3 in persistentDamageValue:
+                self.comboVal.addItem(val3)
 
     def _createCentralWidget(self):
         """Central Widget"""
@@ -264,54 +284,14 @@ class Window(QMainWindow):
         status.showMessage("Let's roll the dice")
         self.setStatusBar(status)
 
-
-    # def _toolbarController(self):
-    """ Tollbar Controller """
-
-conditionData = {
-    'NA':'NA',
-    'Blinded': ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
-    'Broken(object)' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
-    'Clumsy' : ['NA', '1', '2', '3', '4', '5'],
-    'Concealed' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
-    'Confused' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
-    'Controled' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
-    'Dazzled' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
-    'Deafened' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
-    'Doomed' : ['NA', '1', '2', '3', '4', '5'],
-    'Drained' : ['NA', '1', '2', '3', '4', '5'],
-    'Dying' : ['NA', '1', '2', '3', '4', '5'],
-    'Encumbered' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
-    'Enfleebed' : ['NA', '1', '2', '3', '4', '5'],
-    'Fascinated' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
-    'Fatigued' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
-    'Flat-Footed' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
-    'Fleeing' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
-    'Friendly' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
-    'Frightened' : ['NA', '1', '2', '3', '4', '5'],
-    'Grabbed' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
-    'Helpful' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
-    'Hidden' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
-    'Hostile' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
-    'Immobilized' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
-    'Indifferent' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
-    'Invisible' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
-    'Observed' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
-    'Persistent Damage' : ['NA', '1d4', '2d4', '3d4', '1d6', '2d6', '3d6', '1d8', '2d8', 'other'],
-    'Petrified' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
-    'Prone' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
-    'Quickened' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
-    'Restrained' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
-    'Sickened' : ['NA', '1', '2', '3', '4', '5'],
-    'Slowed' : ['NA', '1', '2', '3', '4', '5'],
-    'Stunned' : ['NA', '1', '2', '3', '4', '5'],
-    'Stupefied' : ['NA', '1', '2', '3', '4', '5'],
-    'Unconscious' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
-    'Undetected': ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
-    'Unfriendly' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
-    'Unnoticed' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
-    'Wounded' : ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other'],
-}
+# ConditionData
+conditionList = ['NA', 'Blinded', 'Broken(object)', 'Clumsy', 'Concealed','Confused', 'Controled', 'Dazzled', 'Deafened', 'Doomed','Drained', 'Dying', 'Encumbered', 'Enfleebed', 'Fascinated', 'Fatigued', 'Flat-Footed', 'Fleeing', 'Friendly', 'Frightened', 'Grabbed', 'Helpful', 'Hidden', 'Hostile', 'Immobilized', 'Indifferent', 'Invisible', 'Observed', 'Persistent Damage', 'Petrified', 'Prone', 'Quickened', 'Restrained', 'Sickened', 'Slowed', 'Stunned', 'Stupefied', 'Unconscious', 'Undetected', 'Unfriendly', 'Unnoticed', 'Wounded']
+conditionGeneral = ['NA', 'Blinded', 'Broken(object)', 'Concealed','Confused', 'Controled', 'Dazzled', 'Deafened', 'Encumbered', 'Fascinated', 'Fatigued', 'Flat-Footed', 'Fleeing', 'Friendly', 'Grabbed', 'Helpful', 'Hidden', 'Hostile', 'Immobilized', 'Indifferent', 'Invisible', 'Observed', 'Petrified', 'Prone', 'Quickened', 'Restrained', 'Unconscious', 'Undetected', 'Unfriendly', 'Unnoticed']
+conditionCount = ['Clumsy', 'Doomed','Drained', 'Dying', 'Enfleebed', 'Frightened', 'Sickened', 'Slowed', 'Stunned', 'Stupefied', 'Wounded']
+# valueData
+conditionGeneralValue = ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other']
+conditionCountValue = ['NA', '1', '2', '3', '4', '5']
+persistentDamageValue = ['NA', '1d4', '2d4', '3d4', '1d6', '2d6', '3d6', '1d8', '2d8', 'other']
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
