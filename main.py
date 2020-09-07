@@ -1,14 +1,12 @@
 import sys
 
-from PyQt5 import QtCore
+from PyQt5 import (QtWidgets, QtGui, Qt, QtCore)
+from functools import partial
 from PyQt5.QtCore import (QSize, Qt)
-
 from PyQt5.QtGui import (QIcon, QBitmap, QPixmap)
 from PyQt5.QtWidgets import (QPushButton, QLineEdit, QToolBar, QStatusBar, QMainWindow, QMdiArea, QLabel, QApplication,
                              QComboBox, QVBoxLayout, QHBoxLayout, QToolBox, QGridLayout, QTextEdit, QWidget, QRadioButton,
-                             QCheckBox, QScrollArea, QBoxLayout)
-from PyQt5 import (QtWidgets, QtGui, Qt)
-from functools import partial
+                             QCheckBox, QScrollArea, QBoxLayout, QSizePolicy)
 
 class Window(QMainWindow):
     """Main Window."""
@@ -45,7 +43,8 @@ class Window(QMainWindow):
         # BTN Add char
         addCharBtn = QPushButton()
         addCharBtn.setIcon(QIcon('addchar.png'))
-        self.tools.addWidget(addCharBtn)
+        tools.addWidget(addCharBtn)
+        addCharBtn.clicked.connect(self.addChar)
 
         # BTN Monster
         addMonBtn = QPushButton()
@@ -55,7 +54,8 @@ class Window(QMainWindow):
         #BTN Remove char
         removeCharBtn = QPushButton()
         removeCharBtn.setIcon(QIcon('removechar.png'))
-        self.tools.addWidget(removeCharBtn)
+        tools.addWidget(removeCharBtn)
+        removeCharBtn.clicked.connect(self.removeChar)
 
         # BTN Sort
         sortBtn = QPushButton()
@@ -113,32 +113,50 @@ class Window(QMainWindow):
             for val3 in persistentDamageValue:
                 self.comboVal.addItem(val3)
 
+    def addChar(self):
+        self.charCount = self.charCount + 1
+        self.populateCharWidget()
+
+    def removeChar(self):
+        if self.charCount > 1:
+            self.charCount = self.charCount - 1
+            self.populateCharWidget()
+        else:
+            pass
+
     def _createCentralWidget(self):
         """Central Widget"""
         layout = QVBoxLayout()
+
         scroll = QScrollArea()          # Scroll Area which contains the widgets
         widget = QWidget()              # Widget that contains the collection of Vertical Box
-        vbox = QVBoxLayout()            # The Vertical Box that contains _charLayout
+        self.vbox = QVBoxLayout()            # The Vertical Box that contains _charLayout
 
+        self.vbox.setObjectName("vbox")
+        self.charCount = 4
 
-        layout.addItem(self._roundWidget())             #Calling RoundInfo widget
+        layout.addItem(self._roundWidget())           #Calling RoundInfo widget
         layout.addWidget(scroll)
 
-        charNum = 5
-        x = 0
-        while x < charNum:                             #Routine to call add X characters
-            x = x + 1
-            vbox.addItem(self._charWidget())         #Calling character widget
+        self.populateCharWidget()
 
         """Scroll Area Properties"""
-        widget.setLayout(vbox)
+        widget.setLayout(self.vbox)
         scroll.setWidgetResizable(True)
         scroll.setWidget(widget)
-
 
         centraWid = QWidget()
         centraWid.setLayout(layout)
         self.setCentralWidget(centraWid)              #Changed from QMdiArea to Qwidget, still confused on how to use it
+
+    def populateCharWidget(self):
+        for i in reversed(range(self.vbox.count())):
+            self.vbox.itemAt(i).widget().setParent(None)
+
+        x = 0
+        while x < self.charCount:  # Routine to call add X characters
+            x = x + 1
+            self.vbox.addWidget(self._charWidget())  # Calling character widget
 
     def _roundWidget(self):
         """Top Widget: Informations before characters, called on _createCentralWidget"""
@@ -199,14 +217,35 @@ class Window(QMainWindow):
         self.setLayout(self.toplayout)
         return self.toplayout
 
+    def textEdited(self):
+        # If the input is left empty, revert back to the label showing
+        if not self.charNameEdit.text():
+            self.charNameEdit.hide()
+            self.charName.setText(f"<h1>{'Personagem'}</h1>")
+            self.charName.show()
+        elif self.charNameEdit.text():
+            self.charName.setText(f"<h1>{self.charNameEdit.text()}</h1>")
+            self.charNameEdit.hide()
+            self.charName.show()
+
     def _charWidget(self):
         """Characte Widget: Information of character Called on _createCentralWidget"""
 
+        """Placing editable characters name"""
+
+
+        self.charNameEdit = QLineEdit()
+        #self.charNameEdit.setPlaceholderText('Nome do Personagem')
+        self.charNameEdit.hide()
+        self.charNameEdit.editingFinished.connect(self.textEdited)
+        self.charName = BuddyLabel(self.charNameEdit)
+        self.charName.setText(f"<h1>{'Personagem'}</h1>")  # to be defined from a list with all characters in combat
+        self.charName.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
+
         charDisplayLayout2 = QHBoxLayout()
         charDisplayLayout2.setSpacing(10)
-
-        charName = QLabel(f"<h1>{'Personagem'}</h1>")  # to be defined from a list with all characters in combat
-        charDisplayLayout2.addWidget(charName)
+        charDisplayLayout2.addWidget(self.charName)
+        charDisplayLayout2.addWidget(self.charNameEdit)
         charDisplayLayout2.addStretch(1)
         charDisplayGrid = QGridLayout()
         charDisplayLayout2.addLayout(charDisplayGrid)
@@ -251,7 +290,10 @@ class Window(QMainWindow):
         condPlus.setFixedWidth(20)
         condMinus = QPushButton('-')
         condMinus.setFixedWidth(20)
-        reactionBtn = QPushButton('Reaction icon')
+        reactionBtn = QPushButton(self)
+        reactionBtn.resize(24,24)
+        reactionBtn.setIcon(QIcon('reaction.png'))
+        reactionBtn.setIconSize(QSize(24,24))
 
         isCond = 1                                      #Variable to check if there is condition
 
@@ -268,16 +310,15 @@ class Window(QMainWindow):
         editText = QTextEdit()
         charDisplayLayout4.addWidget(editText)
 
-
         # # Setting character layout
-        self.charlayout = QVBoxLayout()
-        #self.charlayout.addLayout(charDisplayLayout1)
-        self.charlayout.addLayout(charDisplayLayout2)
-        self.charlayout.addLayout(charDisplayLayout3)
-        self.charlayout.addLayout(charDisplayLayout4)
-        self.setLayout(self.charlayout)
+        charlayout = QVBoxLayout()
+        charlayoytWidget = QWidget()
+        charlayoytWidget.setLayout(charlayout)
+        charlayout.addLayout(charDisplayLayout2)
+        charlayout.addLayout(charDisplayLayout3)
+        charlayout.addLayout(charDisplayLayout4)
 
-        return self.charlayout
+        return charlayoytWidget
 
     def _createStatusBar(self):
         status = QStatusBar()
@@ -292,6 +333,23 @@ conditionCount = ['Clumsy', 'Doomed','Drained', 'Dying', 'Enfleebed', 'Frightene
 conditionGeneralValue = ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other']
 conditionCountValue = ['NA', '1', '2', '3', '4', '5']
 persistentDamageValue = ['NA', '1d4', '2d4', '3d4', '1d6', '2d6', '3d6', '1d8', '2d8', 'other']
+
+# class personagem():
+#     def __init__(self, charName, ac, hp, init, cond, effect, footnote, reaction, turnBool, actionNumber ):
+#
+
+
+# Make a custom label widget (mostly for its mousePressEvent) Used to hide characters name
+class BuddyLabel(QLabel):
+    def __init__(self, buddy, parent = None):
+        super(BuddyLabel, self).__init__(parent)
+        self.buddy = buddy
+
+    # When it's clicked, hide itself and show its buddy
+    def mousePressEvent(self, event):
+        self.hide()
+        self.buddy.show()
+        self.buddy.setFocus() # Set focus on buddy so user doesn't have to click again
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
