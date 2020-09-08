@@ -1,70 +1,44 @@
 import sys
-
-from PyQt5 import (QtWidgets, QtGui, Qt, QtCore)
-from PyQt5.QtCore import (QSize, Qt)
-from PyQt5.QtGui import (QIcon, QBitmap, QPixmap)
-from PyQt5.QtWidgets import (QPushButton, QLineEdit, QToolBar, QStatusBar, QMainWindow, QMdiArea, QLabel, QApplication,
-                             QComboBox, QVBoxLayout, QHBoxLayout, QToolBox, QGridLayout, QTextEdit, QWidget, QRadioButton,
-                             QCheckBox, QScrollArea, QBoxLayout, QSizePolicy)
+from PyQt5.QtCore import (Qt, pyqtSignal)
+from PyQt5.QtWidgets import (QWidget, QLCDNumber, QSlider,
+    QVBoxLayout, QApplication)
 
 
-# Make a custom label widget (mostly for its mousePressEvent)
-class BuddyLabel(QLabel):
-    def __init__(self, buddy, parent = None):
-        super(BuddyLabel, self).__init__(parent)
-        self.buddy = buddy
+class Example(QWidget):
 
-    # When it's clicked, hide itself and show its buddy
-    def mousePressEvent(self, event):
-        self.hide()
-        self.buddy.show()
-        self.buddy.setFocus() # Set focus on buddy so user doesn't have to click again
+    def __init__(self):
+        super().__init__()
 
-class Window(QWidget):
-    def __init__(self, parent = None):
-        super(Window, self).__init__(parent)
+        #create signal
+        self.val_Changed = pyqtSignal(int, name='valChanged')
 
-        # Create ui
-        self.myEdit = QLineEdit()
-        self.myEdit.hide() # Hide line edit
-        self.myEdit.editingFinished.connect(self.textEdited)
-        self.myLabel = BuddyLabel(self.myEdit) # Create our custom label, and assign myEdit as its buddy
-        self.myLabel.setText('Nothing has been entered')
-        self.myLabel.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed) # Change vertical size policy so they both match and you don't get popping when switching
+        self.initUI()
 
-        # Put them under a layout together
-        hLayout = QHBoxLayout()
-        hLayout.addWidget(self.myLabel)
-        hLayout.addWidget(self.myEdit)
+    def initUI(self):
 
-        # # Add a line edit with a place holder
-        self.myEdit2 = QLineEdit()
-        self.myEdit2.setPlaceholderText('Nothing has been entered')
-        self.setFocus() # By default this line edit may have focus and the place holder won't show up on load, so focus on the widget
+        lcd = QLCDNumber(self)
+        sld = QSlider(Qt.Horizontal, self)
 
-        # Create main layout
-        mainLayout = QVBoxLayout()
-        mainLayout.addLayout(hLayout)
-        mainLayout.addWidget(self.myEdit2)
-        self.setLayout(mainLayout)
+        vbox = QVBoxLayout()
+        vbox.addWidget(lcd)
+        vbox.addWidget(sld)
 
-        # Resize and show!
-        self.resize(300, 200)
+        self.setLayout(vbox)
+
+        sld.val_Changed.connect(self.handle_LCD)
+        self.val_Changed.emit()
+
+        self.setGeometry(300, 300, 250, 150)
+        self.setWindowTitle('Signal & slot')
         self.show()
 
-    def textEdited(self):
-        # If the input is left empty, revert back to the label showing
-        if not self.myEdit.text():
-            self.myEdit.hide()
-            self.myLabel.show()
-        if self.myEdit.text():
-            self.myLabel.setText(self.myEdit.text())
-            self.myEdit.hide()
-            self.myLabel.show()
-
+    def handle_LCD(self, text):
+        '''log'''
+        print(text)
+        '''connect val_Changed to lcd.display'''
 
 if __name__ == '__main__':
+
     app = QApplication(sys.argv)
-    win = Window()
-    win.show()
+    ex = Example()
     sys.exit(app.exec_())

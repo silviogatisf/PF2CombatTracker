@@ -134,6 +134,8 @@ class Window(QMainWindow):
 
         self.vbox.setObjectName("vbox")
         self.charCount = 1
+        self.charList = []
+
 
         layout.addWidget(self._roundWidget())           #Calling RoundInfo widget
         layout.addWidget(scroll)
@@ -153,7 +155,10 @@ class Window(QMainWindow):
     def populateCharWidget(self, signal):
 
         if signal:
-            self.vbox.addWidget(self._charWidget())  # Calling character widget
+            self.charList.append(len(self.charList))
+            per = self.charList[-1]
+            per = personagem()
+            self.vbox.addWidget(per.createWidget(self.charList[-1]))  # Calling character widget
             print(self.vbox.count())
         elif not signal:
             self.vbox.itemAt(self.vbox.count()-1).widget().setParent(None)
@@ -222,50 +227,96 @@ class Window(QMainWindow):
         self.setLayout(self.toplayout)
         return self.toplayoutWidget
 
+    def _createStatusBar(self):
+        status = QStatusBar()
+        status.showMessage("Let's roll the dice")
+        self.setStatusBar(status)
+
+# ConditionData
+conditionList = ['NA', 'Blinded', 'Broken(object)', 'Clumsy', 'Concealed','Confused', 'Controled', 'Dazzled', 'Deafened', 'Doomed','Drained', 'Dying', 'Encumbered', 'Enfleebed', 'Fascinated', 'Fatigued', 'Flat-Footed', 'Fleeing', 'Friendly', 'Frightened', 'Grabbed', 'Helpful', 'Hidden', 'Hostile', 'Immobilized', 'Indifferent', 'Invisible', 'Observed', 'Persistent Damage', 'Petrified', 'Prone', 'Quickened', 'Restrained', 'Sickened', 'Slowed', 'Stunned', 'Stupefied', 'Unconscious', 'Undetected', 'Unfriendly', 'Unnoticed', 'Wounded']
+conditionGeneral = ['NA', 'Blinded', 'Broken(object)', 'Concealed','Confused', 'Controled', 'Dazzled', 'Deafened', 'Encumbered', 'Fascinated', 'Fatigued', 'Flat-Footed', 'Fleeing', 'Friendly', 'Grabbed', 'Helpful', 'Hidden', 'Hostile', 'Immobilized', 'Indifferent', 'Invisible', 'Observed', 'Petrified', 'Prone', 'Quickened', 'Restrained', 'Unconscious', 'Undetected', 'Unfriendly', 'Unnoticed']
+conditionCount = ['Clumsy', 'Doomed','Drained', 'Dying', 'Enfleebed', 'Frightened', 'Sickened', 'Slowed', 'Stunned', 'Stupefied', 'Wounded']
+# valueData
+conditionGeneralValue = ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other']
+conditionCountValue = ['NA', '1', '2', '3', '4', '5']
+persistentDamageValue = ['NA', '1d4', '2d4', '3d4', '1d6', '2d6', '3d6', '1d8', '2d8', 'other']
+
+class personagem(QWidget):
+    def __init__(self, parent = None):
+        super(personagem, self).__init__(parent)
+        self.name = ''
+        self.ac = 0
+        self.hp = 0
+        self.init = 0
+        # self.cond = {}
+        # self.effect
+        # self.footnote
+        # self.reaction
+        # self.turnBool
+        self.actionNumber = 0
+        self.position = 0
+
     def textEdited(self):
         # If the input is left empty, revert back to the label showing
         if not self.charNameEdit.text():
+            print(123312)
             self.charNameEdit.hide()
-            self.charName.setText(f"<h1>{'Personagem'}</h1>")
+            self.charName.setText(f"<h1>{'Personagem' + str(self.position)}</h1>")
             self.charName.show()
         elif self.charNameEdit.text():
             self.charName.setText(f"<h1>{self.charNameEdit.text()}</h1>")
             self.charNameEdit.hide()
             self.charName.show()
 
-    def _charWidget(self):
-        """Characte Widget: Information of character Called on _createCentralWidget"""
+    def sumHP(self):
+        print('oi')
 
-        """Placing editable characters name"""
+    def createWidget(self, position):
+        print(position)
+        layoutV = QVBoxLayout()
+        widgetMain = QWidget()
+        widgetMain.setLayout(layoutV)
+        layoutH1 = QHBoxLayout()
+        widget1 = QWidget()
+        widget1.setLayout(layoutH1)
+        widget2 = QWidget()
+        layoutH2 = QHBoxLayout()
+        widget2.setLayout(layoutH2)
+        widget3 = QWidget()
+        layoutH3 = QHBoxLayout()
+        widget3.setLayout(layoutH3)
+        layoutV.addWidget(widget1)
+        layoutV.addWidget(widget2)
+        layoutV.addWidget(widget3)
 
-
+        #Placing editable character name
         self.charNameEdit = QLineEdit()
-        self.charNameEdit.setPlaceholderText('Nome do Personagem')
+        self.charNameEdit.setPlaceholderText('Nome do Personagem ')
         self.charNameEdit.hide()
         self.charNameEdit.editingFinished.connect(self.textEdited)
         self.charName = BuddyLabel(self.charNameEdit)
-        self.charName.setText(f"<h1>{'Personagem'}</h1>")  # to be defined from a list with all characters in combat
+        self.charName.setText(f"<h1>{'Personagem ' + str(position)}</h1>")  # to be defined from a list with all characters in combat
         self.charName.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
 
-        charDisplayLayout2 = QHBoxLayout()
-        charDisplayLayout2.setSpacing(10)
-        charDisplayLayout2.addWidget(self.charName)
-        charDisplayLayout2.addWidget(self.charNameEdit)
-        charDisplayLayout2.addStretch(1)
+        layoutH1.setSpacing(10)
+        layoutH1.addWidget(self.charName)
+        layoutH1.addWidget(self.charNameEdit)
+        layoutH1.addStretch(1)
         charDisplayGrid = QGridLayout()
-        charDisplayLayout2.addLayout(charDisplayGrid)
+        layoutH1.addLayout(charDisplayGrid)
 
         """Defining all the widgets"""
         hp = QLabel('HP')           #Title HP
         hpMod = QLabel('HP MOD')    #Title HP MOD
-        hpDisplay = QLabel('100')   #Amount of HP, must be a variable to be changeable
-        hpModLine = QLineEdit()     #Place to write the amount of HP to be deducted
-        hpModLine.setFixedWidth(40)
-        hpApply = QPushButton('Apply')
-        hpApply.setFixedWidth(40)
+        hpDisplay = QLabel(str(self.hp + position))   #Amount of HP, must be a variable to be changeable
+        self.hpModLine = QLineEdit()     #Place to write the amount of HP to be deducted
+        self.hpModLine.setFixedWidth(40)
+        self.hpApply = QPushButton('Apply')
+        self.hpApply.setFixedWidth(40)
+        self.hpApply.clicked.connect(self.sumHP)
         ac = QLabel('AC')           #Title AC
         acTotal = QLabel('AC Total')#Title AC Total
-        acDisplay = QLabel('120')   #Amout of AC, must be a variable to be changeable
+        acDisplay = QLabel(str(self.ac))   #Amout of AC, must be a variable to be changeable
         acTotalLine = QLineEdit()   #Plave to write a valor of AC
         acTotalLine.setFixedWidth(40)
         acApply = QPushButton('Apply')
@@ -281,78 +332,47 @@ class Window(QMainWindow):
         charDisplayGrid.addWidget(acTotal, 0, 4)
         charDisplayGrid.addWidget(init, 0, 6)
         charDisplayGrid.addWidget(hpDisplay, 1, 0)
-        charDisplayGrid.addWidget(hpModLine, 1, 1)
-        charDisplayGrid.addWidget(hpApply, 1, 2)
+        charDisplayGrid.addWidget(self.hpModLine, 1, 1)
+        charDisplayGrid.addWidget(self.hpApply, 1, 2)
         charDisplayGrid.addWidget(acDisplay, 1, 3)
         charDisplayGrid.addWidget(acTotalLine, 1, 4)
         charDisplayGrid.addWidget(acApply, 1, 5)
         charDisplayGrid.addWidget(initLine, 1, 6)
 
         """Placing conditions and effects"""
-        charDisplayLayout3 = QHBoxLayout()
         cond = QLabel('Condition 1')
         condPlus = QPushButton('+')
         condPlus.setFixedWidth(20)
         condMinus = QPushButton('-')
         condMinus.setFixedWidth(20)
         reactionBtn = QPushButton(self)
-        reactionBtn.resize(24,24)
+        reactionBtn.resize(24, 24)
         reactionBtn.setIcon(QIcon('reaction.png'))
-        reactionBtn.setIconSize(QSize(24,24))
+        reactionBtn.setIconSize(QSize(24, 24))
 
-        isCond = 1                                      #Variable to check if there is condition
+        isCond = 1  # Variable to check if there is condition
 
         if isCond == True:
-            charDisplayLayout3.addWidget(cond)
-            charDisplayLayout3.addWidget(condPlus)
-            charDisplayLayout3.addWidget(condMinus)
+            layoutH2.addWidget(cond)
+            layoutH2.addWidget(condPlus)
+            layoutH2.addWidget(condMinus)
 
-        charDisplayLayout3.addStretch(1)
-        charDisplayLayout3.addWidget(reactionBtn)
+        layoutH2.addStretch(1)
+        layoutH2.addWidget(reactionBtn)
 
-        #Free space to write
-        charDisplayLayout4 = QHBoxLayout()
+        # Free space to write
         editText = QTextEdit()
-        charDisplayLayout4.addWidget(editText)
+        layoutH3.addWidget(editText)
 
         # # Setting character layout
         charlayout = QVBoxLayout()
         charlayoytWidget = QWidget()
         charlayoytWidget.setLayout(charlayout)
-        charlayout.addLayout(charDisplayLayout2)
-        charlayout.addLayout(charDisplayLayout3)
-        charlayout.addLayout(charDisplayLayout4)
+        charlayout.addWidget(widget1)
+        charlayout.addWidget(widget2)
+        charlayout.addWidget(widget3)
 
         return charlayoytWidget
-
-    def _createStatusBar(self):
-        status = QStatusBar()
-        status.showMessage("Let's roll the dice")
-        self.setStatusBar(status)
-
-# ConditionData
-conditionList = ['NA', 'Blinded', 'Broken(object)', 'Clumsy', 'Concealed','Confused', 'Controled', 'Dazzled', 'Deafened', 'Doomed','Drained', 'Dying', 'Encumbered', 'Enfleebed', 'Fascinated', 'Fatigued', 'Flat-Footed', 'Fleeing', 'Friendly', 'Frightened', 'Grabbed', 'Helpful', 'Hidden', 'Hostile', 'Immobilized', 'Indifferent', 'Invisible', 'Observed', 'Persistent Damage', 'Petrified', 'Prone', 'Quickened', 'Restrained', 'Sickened', 'Slowed', 'Stunned', 'Stupefied', 'Unconscious', 'Undetected', 'Unfriendly', 'Unnoticed', 'Wounded']
-conditionGeneral = ['NA', 'Blinded', 'Broken(object)', 'Concealed','Confused', 'Controled', 'Dazzled', 'Deafened', 'Encumbered', 'Fascinated', 'Fatigued', 'Flat-Footed', 'Fleeing', 'Friendly', 'Grabbed', 'Helpful', 'Hidden', 'Hostile', 'Immobilized', 'Indifferent', 'Invisible', 'Observed', 'Petrified', 'Prone', 'Quickened', 'Restrained', 'Unconscious', 'Undetected', 'Unfriendly', 'Unnoticed']
-conditionCount = ['Clumsy', 'Doomed','Drained', 'Dying', 'Enfleebed', 'Frightened', 'Sickened', 'Slowed', 'Stunned', 'Stupefied', 'Wounded']
-# valueData
-conditionGeneralValue = ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5 rounds', '6 rounds', '10 rounds', '20 rounds', 'other']
-conditionCountValue = ['NA', '1', '2', '3', '4', '5']
-persistentDamageValue = ['NA', '1d4', '2d4', '3d4', '1d6', '2d6', '3d6', '1d8', '2d8', 'other']
-
-class personagem():
-    def __init__(self, name, ac, hp, init, cond, effect, footnote, reaction, turnBool, actionNumber, parent = None):
-        super(personagem, self).__init__(parent)
-        self.name = name
-        self.ac = ac
-        self.hp = hp
-        self.init = init
-        self.effect = effect
-        self.footnote = footnote
-        self.reaction = reaction
-        self.turnBool = turnBool
-        self.actionNumber = actionNumber
-
-
 
 # Make a custom label widget (mostly for its mousePressEvent) Used to hide characters name
 class BuddyLabel(QLabel):
@@ -365,6 +385,7 @@ class BuddyLabel(QLabel):
         self.hide()
         self.buddy.show()
         self.buddy.setFocus() # Set focus on buddy so user doesn't have to click again
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
