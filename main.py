@@ -115,12 +115,12 @@ class Window(QMainWindow):
 
     def addChar(self):
         self.charCount = self.charCount + 1
-        self.populateCharWidget()
+        self.populateCharWidget(True)
 
     def removeChar(self):
         if self.charCount > 1:
             self.charCount = self.charCount - 1
-            self.populateCharWidget()
+            self.populateCharWidget(False)
         else:
             pass
 
@@ -133,12 +133,13 @@ class Window(QMainWindow):
         self.vbox = QVBoxLayout()            # The Vertical Box that contains _charLayout
 
         self.vbox.setObjectName("vbox")
-        self.charCount = 2
+        self.charCount = 1
 
         layout.addWidget(self._roundWidget())           #Calling RoundInfo widget
         layout.addWidget(scroll)
 
-        self.populateCharWidget()
+        for i in range(self.charCount):
+            self.populateCharWidget(True)
 
         """Scroll Area Properties"""
         widget.setLayout(self.vbox)
@@ -149,14 +150,14 @@ class Window(QMainWindow):
         centraWid.setLayout(layout)
         self.setCentralWidget(centraWid)              #Changed from QMdiArea to Qwidget, still confused on how to use it
 
-    def populateCharWidget(self):
-        for i in reversed(range(self.vbox.count())):
-            self.vbox.itemAt(i).widget().setParent(None)
+    def populateCharWidget(self, signal):
 
-        x = 0
-        while x < self.charCount:  # Routine to call add X characters
-            x = x + 1
+        if signal:
             self.vbox.addWidget(self._charWidget())  # Calling character widget
+            print(self.vbox.count())
+        elif not signal:
+            self.vbox.itemAt(self.vbox.count()-1).widget().setParent(None)
+
 
     def _roundWidget(self):
         """Top Widget: Informations before characters, called on _createCentralWidget"""
@@ -239,7 +240,7 @@ class Window(QMainWindow):
 
 
         self.charNameEdit = QLineEdit()
-        #self.charNameEdit.setPlaceholderText('Nome do Personagem')
+        self.charNameEdit.setPlaceholderText('Nome do Personagem')
         self.charNameEdit.hide()
         self.charNameEdit.editingFinished.connect(self.textEdited)
         self.charName = BuddyLabel(self.charNameEdit)
