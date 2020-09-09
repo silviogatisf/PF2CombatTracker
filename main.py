@@ -288,13 +288,11 @@ class personagem(QWidget):
 
     def sumHP(self):
         self.hp = self.hp + int(self.hpModLine.text())
-        self.hpDisplay = self.hp
-        print(self.hp)
+        self.hpDisplay.setText(str(self.hp))
 
     def sumAC(self):
         self.ac = self.ac + int(self.acTotalLine.text())
-        self.acDisplay = self.ac
-        print(self.ac)
+        self.acDisplay.setText(str(self.ac))
 
     def createWidget(self, position):
         print(position)
