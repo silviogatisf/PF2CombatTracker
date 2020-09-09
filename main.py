@@ -5,7 +5,7 @@ from functools import partial
 from PyQt5.QtCore import (QSize, Qt, QRegExp)
 from PyQt5.QtGui import (QIcon, QBitmap, QPixmap, QRegExpValidator)
 from PyQt5.QtWidgets import (QPushButton, QLineEdit, QToolBar, QStatusBar, QMainWindow, QMdiArea, QLabel, QApplication,
-                             QComboBox, QVBoxLayout, QHBoxLayout, QToolBox, QGridLayout, QTextEdit, QWidget, QRadioButton,
+                             QComboBox, QVBoxLayout, QHBoxLayout, QToolBox, QMessageBox, QGridLayout, QTextEdit, QWidget, QRadioButton,
                              QCheckBox, QScrollArea, QBoxLayout, QSizePolicy)
 
 class Window(QMainWindow):
@@ -286,13 +286,32 @@ class personagem(QWidget):
             self.charNameEdit.hide()
             self.charName.show()
 
+    # HPmod calculation
     def sumHP(self):
-        self.hp = self.hp + int(self.hpModLine.text())
-        self.hpDisplay.setText(str(self.hp))
-
+        hpModEmptyValue = 'Please, insert an HP MOD value'
+        try:
+            self.hp = self.hp + int(self.hpModLine.text())
+        except Exception:
+            self.messageBox = QMessageBox.warning(self, 'HP MOD', hpModEmptyValue)
+        else:
+            self.hpDisplay.setText(str(self.hp))
+    # ACmod calculation
     def sumAC(self):
-        self.ac = self.ac + int(self.acTotalLine.text())
-        self.acDisplay.setText(str(self.ac))
+        acTotalHolder = int(self.acTotalLine.text())
+        acTotalEmptyValue = 'Please, Insert an AC TOTAL value'
+        acNegativeValue = 'The final AC value must be positive'
+        try:
+            self.ac = self.ac + int(self.acTotalLine.text())
+        except Exception:
+            self.messageBox = QMessageBox.warning(self, 'AC TOTAL', acTotalEmptyValue)
+        else:
+            self.acDisplay.setText(str(self.ac))
+        # If ac value is negative
+        if self.ac < 0 :
+            self.messageBox = QMessageBox.warning(self, 'AC TOTAL', acNegativeValue)
+            self.ac = self.ac - acTotalHolder
+            self.acDisplay.setText(str(self.ac))
+            self.acTotalLine.setText('')
 
     def createWidget(self, position):
         print(position)
