@@ -82,7 +82,7 @@ class Window(QMainWindow):
         self.tools.addWidget(QLineEdit('Type here'))
         self.effecRounds = QComboBox(self)
         self.tools.addWidget(self.effecRounds)
-        self.effecRounds.addItems(['Value', '1', '2', '3', '4', '5', '6', '7', '8', '9'])
+        self.effecRounds.addItems(conditionGeneralValue)
         self.btnApplyEffect = QPushButton('Apply')
         self.tools.addWidget(self.btnApplyEffect)
 
