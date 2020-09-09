@@ -2,8 +2,8 @@ import sys
 
 from PyQt5 import (QtWidgets, QtGui, Qt, QtCore)
 from functools import partial
-from PyQt5.QtCore import (QSize, Qt)
-from PyQt5.QtGui import (QIcon, QBitmap, QPixmap)
+from PyQt5.QtCore import (QSize, Qt, QRegExp)
+from PyQt5.QtGui import (QIcon, QBitmap, QPixmap, QRegExpValidator)
 from PyQt5.QtWidgets import (QPushButton, QLineEdit, QToolBar, QStatusBar, QMainWindow, QMdiArea, QLabel, QApplication,
                              QComboBox, QVBoxLayout, QHBoxLayout, QToolBox, QGridLayout, QTextEdit, QWidget, QRadioButton,
                              QCheckBox, QScrollArea, QBoxLayout, QSizePolicy)
@@ -52,6 +52,7 @@ class Window(QMainWindow):
         sortBtn = QPushButton()
         sortBtn.setIcon(QIcon('sort.png'))
         self.tools.addWidget(sortBtn)
+        sortBtn.clicked.connect(self.orderList)
 
         # Condition label
         self.tools.addWidget(QLabel('Condition: '))
@@ -101,6 +102,25 @@ class Window(QMainWindow):
             for val3 in persistentDamageValue:
                 self.comboVal.addItem(val3)
 
+
+    def orderList(self):
+        """Crashing!!!"""
+        initList = []
+
+        for k in reversed(range(self.charBox.count())):
+            self.charBox.removeWidget(self.charBox.itemAt(k))
+
+        for i in self.charList:
+            initList.append(i.init)
+
+        initList.sort(reverse=True)
+
+        for f in initList:
+            for j in self.charList:
+                if f == j.init:
+                    self.charBox.addWidget(j.createWidget(j.position))
+
+
     # addchar method
     def _addChar(self):
         self.charCount = self.charCount + 1
@@ -126,6 +146,7 @@ class Window(QMainWindow):
         # Char widget vertical layout box
         self.charBox = QVBoxLayout()            # The Vertical Box that contains _charLayout
         self.charBox.setObjectName('charBox')
+        self.charBox.addStretch(1)
         self.charCount = 1
         self.charList = []
 
@@ -151,12 +172,13 @@ class Window(QMainWindow):
     def _populateCharWidget(self, signal):
 
         if signal:
-            self.charList.append(len(self.charList))
-            per = self.charList[-1]
             per = personagem()
-            self.charBox.addWidget(per.createWidget(self.charList[-1]))  # Calling character widget
+            per.position = int(len(self.charList))
+            self.charList.append(per)
+            self.charBox.addWidget(per.createWidget(per.position))  # Calling character widget
             print(self.charBox.count())
         elif not signal:
+            self.charList.pop()
             self.charBox.itemAt(self.charBox.count()-1).widget().setParent(None)
 
     # RoundWidget definition
@@ -240,7 +262,7 @@ class Window(QMainWindow):
 class personagem(QWidget):
     def __init__(self, parent = None):
         super(personagem, self).__init__(parent)
-        self.name = ''
+        self.name = 'Personagem '
         self.ac = 0
         self.hp = 0
         self.init = 0
@@ -265,7 +287,14 @@ class personagem(QWidget):
             self.charName.show()
 
     def sumHP(self):
-        print('oi')
+        self.hp = self.hp + int(self.hpModLine.text())
+        self.hpDisplay = self.hp
+        print(self.hp)
+
+    def sumAC(self):
+        self.ac = self.ac + int(self.acTotalLine.text())
+        self.acDisplay = self.ac
+        print(self.ac)
 
     def createWidget(self, position):
         print(position)
@@ -291,7 +320,7 @@ class personagem(QWidget):
         self.charNameEdit.hide()
         self.charNameEdit.editingFinished.connect(self.textEdited)
         self.charName = BuddyLabel(self.charNameEdit)
-        self.charName.setText(f"<h1>{'Personagem ' + str(position)}</h1>")  # to be defined from a list with all characters in combat
+        self.charName.setText(f"<h1>{self.name + str(position)}</h1>")  # to be defined from a list with all characters in combat
         self.charName.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
 
         layoutH1.setSpacing(10)
@@ -302,24 +331,31 @@ class personagem(QWidget):
         layoutH1.addLayout(charDisplayGrid)
 
         """Defining all the widgets"""
+        validador = QRegExpValidator(QRegExp("-?[0-9]{4}"))
         hp = QLabel('HP')           #Title HP
         hpMod = QLabel('HP MOD')    #Title HP MOD
-        hpDisplay = QLabel(str(self.hp + position))   #Amount of HP, must be a variable to be changeable
+        self.hpDisplay = QLabel(str(self.hp))   #Amount of HP, must be a variable to be changeable
         self.hpModLine = QLineEdit()     #Place to write the amount of HP to be deducted
+        self.hpModLine.setValidator(validador)
         self.hpModLine.setFixedWidth(40)
         self.hpApply = QPushButton('Apply')
         self.hpApply.setFixedWidth(40)
         self.hpApply.clicked.connect(self.sumHP)
         ac = QLabel('AC')           #Title AC
         acTotal = QLabel('AC Total')#Title AC Total
-        acDisplay = QLabel(str(self.ac))   #Amout of AC, must be a variable to be changeable
-        acTotalLine = QLineEdit()   #Plave to write a valor of AC
-        acTotalLine.setFixedWidth(40)
-        acApply = QPushButton('Apply')
-        acApply.setFixedWidth(40)
+        self.acDisplay = QLabel(str(self.ac))   #Amout of AC, must be a variable to be changeable
+        self.acTotalLine = QLineEdit()   #Plave to write a valor of AC
+        self.acTotalLine.setValidator(validador)
+        self.acTotalLine.setFixedWidth(40)
+        self.acApply = QPushButton('Apply')
+        self.acApply.clicked.connect(self.sumAC)
+        self.acApply.setFixedWidth(40)
         init = QLabel('Init')       #Title Init
-        initLine = QLineEdit()      #Place to write Init, should be saved in a variable to be able to order characters
-        initLine.setFixedWidth(40)
+        self.initLine = QLineEdit()      #Place to write Init, should be saved in a variable to be able to order characters
+        self.initLine.setValidator(validador)
+        self.initLine.setFixedWidth(40)
+        self.initLine.editingFinished.connect(self.sumHP)
+
 
         """Placing all the widgets in a grid format"""
         charDisplayGrid.addWidget(hp, 0, 0)
@@ -327,13 +363,13 @@ class personagem(QWidget):
         charDisplayGrid.addWidget(ac, 0, 3)
         charDisplayGrid.addWidget(acTotal, 0, 4)
         charDisplayGrid.addWidget(init, 0, 6)
-        charDisplayGrid.addWidget(hpDisplay, 1, 0)
+        charDisplayGrid.addWidget(self.hpDisplay, 1, 0)
         charDisplayGrid.addWidget(self.hpModLine, 1, 1)
         charDisplayGrid.addWidget(self.hpApply, 1, 2)
-        charDisplayGrid.addWidget(acDisplay, 1, 3)
-        charDisplayGrid.addWidget(acTotalLine, 1, 4)
-        charDisplayGrid.addWidget(acApply, 1, 5)
-        charDisplayGrid.addWidget(initLine, 1, 6)
+        charDisplayGrid.addWidget(self.acDisplay, 1, 3)
+        charDisplayGrid.addWidget(self.acTotalLine, 1, 4)
+        charDisplayGrid.addWidget(self.acApply, 1, 5)
+        charDisplayGrid.addWidget(self.initLine, 1, 6)
 
         """Placing conditions and effects"""
         cond = QLabel('Condition 1')
@@ -369,82 +405,6 @@ class personagem(QWidget):
         charlayout.addWidget(widget3)
 
         return charlayoytWidget
-
-#roundWidget class
-# class roundWidget(QWidget):
-#     def __init__(self, roundWidget, parent = None): # TAMBÉM DEVE ENTRAR O PARÂMETRO ROUND AQUI, QUE DEVE SER A CHAMADA DA DE ROUND()
-#         super(roundWidget, self).__init__(parent)
-#         self.roundWidget = roundWidget
-#         #self.round = round()
-#
-#     # RoundWidget definition
-#     def _roundWidget(self):
-#         """Top Widget: Informations before characters, called on _createCentralWidget"""
-#
-#         # DEVE RECEBER O TURNO DO MOMENTO (QUANDO A GENTE FOR FAZER A ROTINA O PERSONAGEM DO MOMENTO VAI SER SELECIONADO E OS DADOS DELE VÃO APARECER AQUI)
-#         # currentTurn = turno()
-#
-#         # Round counter interface
-#         roundNumber = 0 # VAI PUXAR DA CLASSE RODADA QUE VAI ITERAR TODA VEZ QUE O TURNO DE TODOS OS PERSONAGENS FOREM IGUAL A RODADA + 1
-#         roundDisplay = QLabel(f"<h1>ROUND: {roundNumber}</h1>")
-#         # First line of roundDisplay layout
-#         roundDisplayLayout1 = QHBoxLayout()
-#         roundDisplayLayout1.addWidget(roundDisplay)
-#         roundDisplayLayout1.addStretch(1)
-#
-#         # creates the line with the char's turn, actions e buttons to advance and return an turn / slash round
-#         # char's turn display
-#         charTurnDisplay = QLabel("<h2>Character's turn<h2>") # VAI PUXAR DO JOGADOR QUE ESTIVER COM O ATRIBUTO TURN = TRUE
-#        # improvised solution to align the label with the rest of the layout
-#         charTurnDisplay.setFixedHeight(20)
-#         charTurnDisplayLayout = QVBoxLayout()
-#         charTurnDisplayLayout.addStretch(10)
-#         charTurnDisplayLayout.addWidget(charTurnDisplay)
-#         charTurnDisplayLayout.addStretch(10)
-#
-#         # previous turn button
-#         previousTurn = QPushButton(self)
-#         previousTurn.resize(24,24)
-#         previousTurn.setIcon(QIcon('circle-left.png'))
-#         previousTurn.setIconSize(QSize(24,24))
-#
-#         # actions icons
-#         actionsNumber = 3 # TAMBÉM VAI PUXAR DO JOGADOR QUE ESTIVER COM O ATRIBUTO TURN = TRUE
-#         # actions layout
-#         actionLayout = QHBoxLayout()
-#         for action in range(0, actionsNumber):
-#             actionsIcon = QLabel(self)
-#             actionsIconPixmap = QPixmap('action.png')
-#             actionsIcon.setPixmap(actionsIconPixmap)
-#             actionLayout.addWidget(actionsIcon)
-#             actionLayout.addSpacing(10)
-#
-#         # next turn button
-#         nextTurn = QPushButton(self)
-#         nextTurn.resize(24,24)
-#         nextTurn.setIcon(QIcon('circle-right.png'))
-#         nextTurn.setIconSize(QSize(24,24))
-#
-#         # layout of the second line of the roundDysplay
-#         roundDisplayLayout2 = QHBoxLayout()
-#         roundDisplayLayout2.addLayout(charTurnDisplayLayout)
-#         roundDisplayLayout2.addStretch(1)
-#         roundDisplayLayout2.addWidget(previousTurn)
-#         roundDisplayLayout2.addSpacing(10)
-#         roundDisplayLayout2.addLayout(actionLayout)
-#         roundDisplayLayout2.addWidget(nextTurn)
-#
-#         # roundDisplay widget definition
-#         self.roundTopLayoutWidget = QWidget()
-#         self.roundTopLayoutWidget.setFixedHeight(85)
-#         # roundDisplayLayoutTop
-#         self.roundTopLayout = QVBoxLayout()
-#         self.roundTopLayoutWidget.setLayout(self.roundTopLayout)
-#         self.roundTopLayout.addLayout(roundDisplayLayout1)
-#         self.roundTopLayout.addLayout(roundDisplayLayout2)
-#
-#         self.setLayout(self.roundTopLayout)
-#         return self.roundTopLayoutWidget
 
 # Make a custom label widget (mostly for its mousePressEvent) Used to hide characters name
 
