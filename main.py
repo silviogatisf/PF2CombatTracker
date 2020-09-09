@@ -102,7 +102,7 @@ class Window(QMainWindow):
             for val3 in persistentDamageValue:
                 self.comboVal.addItem(val3)
 
-
+    # Sort char method
     def orderList(self):
         """Crashing!!!"""
         initList = []
@@ -259,6 +259,7 @@ class Window(QMainWindow):
         status.showMessage("Let's roll the dice")
         self.setStatusBar(status)
 
+    # personagem class definition
 class personagem(QWidget):
     def __init__(self, parent = None):
         super(personagem, self).__init__(parent)
@@ -274,6 +275,7 @@ class personagem(QWidget):
         self.actionNumber = 0
         self.position = 0
 
+    # personagem label x lineEditmethod
     def textEdited(self):
         # If the input is left empty, revert back to the label showing
         if not self.charNameEdit.text():
@@ -286,7 +288,7 @@ class personagem(QWidget):
             self.charNameEdit.hide()
             self.charName.show()
 
-    # HPmod calculation
+    # HPmod calculation method
     def sumHP(self):
         hpModEmptyValue = 'Please, insert an HP MOD value'
         try:
@@ -295,7 +297,7 @@ class personagem(QWidget):
             self.messageBox = QMessageBox.warning(self, 'HP MOD', hpModEmptyValue)
         else:
             self.hpDisplay.setText(str(self.hp))
-    # ACmod calculation
+    # ACmod calculation calculation method
     def sumAC(self):
         acTotalHolder = int(self.acTotalLine.text())
         acTotalEmptyValue = 'Please, Insert an AC TOTAL value'
@@ -313,6 +315,7 @@ class personagem(QWidget):
             self.acDisplay.setText(str(self.ac))
             self.acTotalLine.setText('')
 
+    # personagem interface and layoyt method
     def createWidget(self, position):
         print(position)
         layoutV = QVBoxLayout()
@@ -423,8 +426,8 @@ class personagem(QWidget):
 
         return charlayoytWidget
 
+# hide label, show line edit, edit label class
 # Make a custom label widget (mostly for its mousePressEvent) Used to hide characters name
-
 class BuddyLabel(QLabel):
     def __init__(self, buddy, parent = None):
         super(BuddyLabel, self).__init__(parent)
@@ -445,6 +448,7 @@ conditionGeneralValue = ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5
 conditionCountValue = ['NA', '1', '2', '3', '4', '5']
 persistentDamageValue = ['NA', '1d4', '2d4', '3d4', '1d6', '2d6', '3d6', '1d8', '2d8', 'other']
 
+# window creation
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     win = Window()
