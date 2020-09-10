@@ -5,8 +5,9 @@ from functools import partial
 from PyQt5.QtCore import (QSize, Qt, QRegExp)
 from PyQt5.QtGui import (QIcon, QBitmap, QPixmap, QRegExpValidator)
 from PyQt5.QtWidgets import (QPushButton, QLineEdit, QToolBar, QStatusBar, QMainWindow, QMdiArea, QLabel, QApplication,
-                             QComboBox, QVBoxLayout, QHBoxLayout, QToolBox, QMessageBox, QGridLayout, QTextEdit, QWidget, QRadioButton,
-                             QCheckBox, QScrollArea, QBoxLayout, QSizePolicy)
+                             QComboBox, QVBoxLayout, QHBoxLayout, QToolBox, QMessageBox, QGridLayout, QTextEdit,
+                             QWidget, QRadioButton,
+                             QCheckBox, QScrollArea, QBoxLayout, QSizePolicy, QButtonGroup)
 
 class Window(QMainWindow):
     """Main Window."""
@@ -134,6 +135,9 @@ class Window(QMainWindow):
         else:
             pass
 
+    #publics btnList
+    def pubbtnList(self):
+        return self.btnList
 
     # MainWindow CentralWidget definition
     def _createCentralWidget(self):
@@ -149,6 +153,7 @@ class Window(QMainWindow):
         self.charBox.addStretch(1)
         self.charCount = 1
         self.charList = []
+        self.btnList = []
 
         # Central layout of the Central widget
         layout = QVBoxLayout()
@@ -176,9 +181,11 @@ class Window(QMainWindow):
             per.position = int(len(self.charList))
             self.charList.append(per)
             self.charBox.addWidget(per.createWidget(per.position))  # Calling character widget
-            print(self.charBox.count())
+            self.btnList.append(per.rdbtn)
+            print(self.btnList)
         elif not signal:
             self.charList.pop()
+            self.btnList.pop()
             self.charBox.itemAt(self.charBox.count()-1).widget().setParent(None)
 
     # RoundWidget definition
@@ -267,11 +274,11 @@ class personagem(QWidget):
         self.ac = 0
         self.hp = 0
         self.init = 0
-        # self.cond = {}
-        # self.effect
-        # self.footnote
-        # self.reaction
-        # self.turnBool
+        self.cond = {}
+        self.effect = {}
+        self.footnote = ''
+        self.reaction = bool
+        self.turnBool = bool
         self.actionNumber = 0
         self.position = 0
 
@@ -297,6 +304,7 @@ class personagem(QWidget):
             self.messageBox = QMessageBox.warning(self, 'HP MOD', hpModEmptyValue)
         else:
             self.hpDisplay.setText(str(self.hp))
+
     # ACmod calculation calculation method
     def sumAC(self):
         acTotalHolder = int(self.acTotalLine.text())
@@ -314,6 +322,26 @@ class personagem(QWidget):
             self.ac = self.ac - acTotalHolder
             self.acDisplay.setText(str(self.ac))
             self.acTotalLine.setText('')
+
+    # # creat radioButton
+    # def radioButton(self):
+    #     self.rdobtn = QRadioButton()
+
+    def on_button_clicked(self):
+        btnName = self.sender()
+        print(self.sender())
+        print(Window.pubbtnList(self))
+
+        # for i in self.btnList:
+        #     print(i)
+        #     # if i != btnName:
+        #     #     if i.isChecked():
+        #     #         i.setChecked()
+        #     #     else:
+        #     #         pass
+        #     #     #DEsselecionar i
+
+
 
     # personagem interface and layoyt method
     def createWidget(self, position):
@@ -342,8 +370,12 @@ class personagem(QWidget):
         self.charName = BuddyLabel(self.charNameEdit)
         self.charName.setText(f"<h1>{self.name + str(position)}</h1>")  # to be defined from a list with all characters in combat
         self.charName.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
+        #self.rdbtnGroup = QButtonGroup()
+        self.rdbtn = QRadioButton()
+        self.rdbtn.clicked.connect(self.on_button_clicked)
 
         layoutH1.setSpacing(10)
+        layoutH1.addWidget(self.rdbtn)
         layoutH1.addWidget(self.charName)
         layoutH1.addWidget(self.charNameEdit)
         layoutH1.addStretch(1)
