@@ -1,12 +1,10 @@
 import sys
 
-from PyQt5 import (QtWidgets, QtGui, Qt, QtCore)
-from functools import partial
-from PyQt5.QtCore import (QSize, Qt, QRegExp)
-from PyQt5.QtGui import (QIcon, QBitmap, QPixmap, QRegExpValidator)
-from PyQt5.QtWidgets import (QPushButton, QLineEdit, QToolBar, QStatusBar, QMainWindow, QMdiArea, QLabel, QApplication,
-                             QComboBox, QVBoxLayout, QHBoxLayout, QToolBox, QMessageBox, QGridLayout, QTextEdit, QWidget, QRadioButton,
-                             QCheckBox, QScrollArea, QBoxLayout, QSizePolicy)
+from PyQt5.QtCore import (QSize, QRegExp)
+from PyQt5.QtGui import (QIcon, QPixmap, QRegExpValidator)
+from PyQt5.QtWidgets import (QPushButton, QLineEdit, QToolBar, QStatusBar, QMainWindow, QLabel, QApplication,
+                             QComboBox, QVBoxLayout, QHBoxLayout, QMessageBox, QGridLayout, QTextEdit, QWidget,
+                             QScrollArea, QSizePolicy)
 
 class Window(QMainWindow):
     """Main Window."""
@@ -120,7 +118,6 @@ class Window(QMainWindow):
                 if f == j.init:
                     self.charBox.addWidget(j.createWidget(j.position))
 
-
     # addchar method
     def _addChar(self):
         self.charCount = self.charCount + 1
@@ -133,7 +130,6 @@ class Window(QMainWindow):
             self._populateCharWidget(False)
         else:
             pass
-
 
     # MainWindow CentralWidget definition
     def _createCentralWidget(self):
@@ -184,9 +180,6 @@ class Window(QMainWindow):
     # RoundWidget definition
     def _roundWidget(self):
         """Top Widget: Informations before characters, called on _createCentralWidget"""
-
-        # DEVE RECEBER O TURNO DO MOMENTO (QUANDO A GENTE FOR FAZER A ROTINA O PERSONAGEM DO MOMENTO VAI SER SELECIONADO E OS DADOS DELE VÃO APARECER AQUI)
-        # currentTurn = turno()
 
         # Round counter interface
         roundNumber = 0 # VAI PUXAR DA CLASSE RODADA QUE VAI ITERAR TODA VEZ QUE O TURNO DE TODOS OS PERSONAGENS FOREM IGUAL A RODADA + 1
@@ -250,9 +243,6 @@ class Window(QMainWindow):
         self.setLayout(self.roundTopLayout)
         return self.roundTopLayoutWidget
 
-    # charWidget definition
-    # def _charWidget(self):
-
     # statusBar definition
     def _createStatusBar(self):
         status = QStatusBar()
@@ -296,24 +286,27 @@ class personagem(QWidget):
         except Exception:
             self.messageBox = QMessageBox.warning(self, 'HP MOD', hpModEmptyValue)
         else:
-            self.hpDisplay.setText(str(self.hp))
-    # ACmod calculation calculation method
+            if self.hp < 0:
+                self.hpDisplay.setText('0')
+                self.hpModLine.setText('')
+            else:
+                self.hpDisplay.setText(str(self.hp))
+                self.hpModLine.setText('')
+
+    # ACTotal calculation method
     def sumAC(self):
-        acTotalHolder = int(self.acTotalLine.text())
-        acTotalEmptyValue = 'Please, Insert an AC TOTAL value'
-        acNegativeValue = 'The final AC value must be positive'
+        acModEmptyValue = 'Please, insert an AC TOTAL value'
         try:
             self.ac = self.ac + int(self.acTotalLine.text())
         except Exception:
-            self.messageBox = QMessageBox.warning(self, 'AC TOTAL', acTotalEmptyValue)
+            self.messageBox = QMessageBox.warning(self, 'AC TOTAL', acModEmptyValue)
         else:
-            self.acDisplay.setText(str(self.ac))
-        # If ac value is negative
-        if self.ac < 0 :
-            self.messageBox = QMessageBox.warning(self, 'AC TOTAL', acNegativeValue)
-            self.ac = self.ac - acTotalHolder
-            self.acDisplay.setText(str(self.ac))
-            self.acTotalLine.setText('')
+            if self.ac < 0:
+                self.acDisplay.setText('0')
+                self.acTotalLine.setText('')
+            else:
+                self.acDisplay.setText(str(self.ac))
+                self.acTotalLine.setText('')
 
     # personagem interface and layoyt method
     def createWidget(self, position):
