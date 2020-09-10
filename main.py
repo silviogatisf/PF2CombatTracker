@@ -1,12 +1,10 @@
 import sys
 
-from PyQt5 import (QtWidgets, QtGui, Qt, QtCore)
-from functools import partial
-from PyQt5.QtCore import (QSize, Qt, QRegExp)
-from PyQt5.QtGui import (QIcon, QBitmap, QPixmap, QRegExpValidator)
-from PyQt5.QtWidgets import (QPushButton, QLineEdit, QToolBar, QStatusBar, QMainWindow, QMdiArea, QLabel, QApplication,
-                             QComboBox, QVBoxLayout, QHBoxLayout, QToolBox, QGridLayout, QTextEdit, QWidget, QRadioButton,
-                             QCheckBox, QScrollArea, QBoxLayout, QSizePolicy)
+from PyQt5.QtCore import (QSize, QRegExp)
+from PyQt5.QtGui import (QIcon, QPixmap, QRegExpValidator)
+from PyQt5.QtWidgets import (QPushButton, QLineEdit, QToolBar, QStatusBar, QMainWindow, QLabel, QApplication,
+                             QComboBox, QVBoxLayout, QHBoxLayout, QMessageBox, QGridLayout, QTextEdit, QWidget,
+                             QScrollArea, QSizePolicy)
 
 class Window(QMainWindow):
     """Main Window."""
@@ -82,7 +80,7 @@ class Window(QMainWindow):
         self.tools.addWidget(QLineEdit('Type here'))
         self.effecRounds = QComboBox(self)
         self.tools.addWidget(self.effecRounds)
-        self.effecRounds.addItems(['Value', '1', '2', '3', '4', '5', '6', '7', '8', '9'])
+        self.effecRounds.addItems(conditionGeneralValue)
         self.btnApplyEffect = QPushButton('Apply')
         self.tools.addWidget(self.btnApplyEffect)
 
@@ -102,7 +100,7 @@ class Window(QMainWindow):
             for val3 in persistentDamageValue:
                 self.comboVal.addItem(val3)
 
-
+    # Sort char method
     def orderList(self):
         """Crashing!!!"""
         initList = []
@@ -120,7 +118,6 @@ class Window(QMainWindow):
                 if f == j.init:
                     self.charBox.addWidget(j.createWidget(j.position))
 
-
     # addchar method
     def _addChar(self):
         self.charCount = self.charCount + 1
@@ -133,7 +130,6 @@ class Window(QMainWindow):
             self._populateCharWidget(False)
         else:
             pass
-
 
     # MainWindow CentralWidget definition
     def _createCentralWidget(self):
@@ -184,9 +180,6 @@ class Window(QMainWindow):
     # RoundWidget definition
     def _roundWidget(self):
         """Top Widget: Informations before characters, called on _createCentralWidget"""
-
-        # DEVE RECEBER O TURNO DO MOMENTO (QUANDO A GENTE FOR FAZER A ROTINA O PERSONAGEM DO MOMENTO VAI SER SELECIONADO E OS DADOS DELE VÃO APARECER AQUI)
-        # currentTurn = turno()
 
         # Round counter interface
         roundNumber = 0 # VAI PUXAR DA CLASSE RODADA QUE VAI ITERAR TODA VEZ QUE O TURNO DE TODOS OS PERSONAGENS FOREM IGUAL A RODADA + 1
@@ -250,15 +243,13 @@ class Window(QMainWindow):
         self.setLayout(self.roundTopLayout)
         return self.roundTopLayoutWidget
 
-    # charWidget definition
-    # def _charWidget(self):
-
     # statusBar definition
     def _createStatusBar(self):
         status = QStatusBar()
         status.showMessage("Let's roll the dice")
         self.setStatusBar(status)
 
+    # personagem class definition
 class personagem(QWidget):
     def __init__(self, parent = None):
         super(personagem, self).__init__(parent)
@@ -274,6 +265,7 @@ class personagem(QWidget):
         self.actionNumber = 0
         self.position = 0
 
+    # personagem label x lineEditmethod
     def textEdited(self):
         # If the input is left empty, revert back to the label showing
         if not self.charNameEdit.text():
@@ -286,14 +278,37 @@ class personagem(QWidget):
             self.charNameEdit.hide()
             self.charName.show()
 
+    # HPmod calculation method
     def sumHP(self):
-        self.hp = self.hp + int(self.hpModLine.text())
-        self.hpDisplay.setText(str(self.hp))
+        hpModEmptyValue = 'Please, insert an HP MOD value'
+        try:
+            self.hp = self.hp + int(self.hpModLine.text())
+        except Exception:
+            self.messageBox = QMessageBox.warning(self, 'HP MOD', hpModEmptyValue)
+        else:
+            if self.hp < 0:
+                self.hpDisplay.setText('0')
+                self.hpModLine.setText('')
+            else:
+                self.hpDisplay.setText(str(self.hp))
+                self.hpModLine.setText('')
 
+    # ACTotal calculation method
     def sumAC(self):
-        self.ac = self.ac + int(self.acTotalLine.text())
-        self.acDisplay.setText(str(self.ac))
+        acModEmptyValue = 'Please, insert an AC TOTAL value'
+        try:
+            self.ac = self.ac + int(self.acTotalLine.text())
+        except Exception:
+            self.messageBox = QMessageBox.warning(self, 'AC TOTAL', acModEmptyValue)
+        else:
+            if self.ac < 0:
+                self.acDisplay.setText('0')
+                self.acTotalLine.setText('')
+            else:
+                self.acDisplay.setText(str(self.ac))
+                self.acTotalLine.setText('')
 
+    # personagem interface and layoyt method
     def createWidget(self, position):
         print(position)
         layoutV = QVBoxLayout()
@@ -404,8 +419,8 @@ class personagem(QWidget):
 
         return charlayoytWidget
 
+# hide label, show line edit, edit label class
 # Make a custom label widget (mostly for its mousePressEvent) Used to hide characters name
-
 class BuddyLabel(QLabel):
     def __init__(self, buddy, parent = None):
         super(BuddyLabel, self).__init__(parent)
@@ -426,6 +441,7 @@ conditionGeneralValue = ['NA', '1 round', '2 rounds', '3 rounds', '4 rounds', '5
 conditionCountValue = ['NA', '1', '2', '3', '4', '5']
 persistentDamageValue = ['NA', '1d4', '2d4', '3d4', '1d6', '2d6', '3d6', '1d8', '2d8', 'other']
 
+# window creation
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     win = Window()
