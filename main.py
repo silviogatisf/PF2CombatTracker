@@ -4,7 +4,7 @@ from PyQt5.QtCore import (QSize, QRegExp)
 from PyQt5.QtGui import (QIcon, QPixmap, QRegExpValidator)
 from PyQt5.QtWidgets import (QPushButton, QLineEdit, QToolBar, QStatusBar, QMainWindow, QLabel, QApplication,
                              QComboBox, QVBoxLayout, QHBoxLayout, QMessageBox, QGridLayout, QTextEdit, QWidget,
-                             QScrollArea, QSizePolicy)
+                             QScrollArea, QSizePolicy, QRadioButton)
 
 class Window(QMainWindow):
     """Main Window."""
@@ -335,8 +335,10 @@ class personagem(QWidget):
         self.charName = BuddyLabel(self.charNameEdit)
         self.charName.setText(f"<h1>{self.name + str(position)}</h1>")  # to be defined from a list with all characters in combat
         self.charName.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
+        self.btn = QRadioButton()
 
         layoutH1.setSpacing(10)
+        layoutH1.addWidget(self.btn)
         layoutH1.addWidget(self.charName)
         layoutH1.addWidget(self.charNameEdit)
         layoutH1.addStretch(1)
